@@ -1,14 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { getProjectRoot } from './common/utilities';
-import { ISettings, getExtensionSettings, getInterpreterFromSetting, getWorkspaceSettings } from './common/settings';
-import { updateStatus } from './common/status';
-import { registerLogger, traceError, traceInfo, traceLog } from './common/logging';
+import { ISettings, getExtensionSettings, getInterpreterFromSetting } from './common/settings';
+import { registerLogger, traceLog } from './common/logging';
 import { createOutputChannel } from './common/vscodeapi';
 import * as consts from "./common/constants"
-import { initializePython, installPythonPackagesInEnv, isPythonPackageInstalledInEnv } from './common/python';
-import { checkAndPromptToInstallPythonPackages } from './common/ui/install-python-libs-modal';
+import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 
 
@@ -43,7 +40,6 @@ export async function activate(context: vscode.ExtensionContext) {
 // This method is called when your extension is deactivated
 export function deactivate() {}
 
-/**
  
 /**
  * Ensure the Python extension is installed.
