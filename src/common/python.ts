@@ -5,6 +5,11 @@ import * as vscode from "vscode";
 import { exec as execCb } from 'child_process';
 import { promisify } from 'util';
 import { runShellCommand } from './shell';
+import { getProjectRoot } from './utilities';
+import { getWorkspaceSettings } from './settings';
+import { SETTINGS_NAMESPACE } from './constants';
+import { updateStatus } from './status';
+import * as consts from "./constants"
 
 const exec = promisify(execCb);
 
@@ -245,7 +250,6 @@ export async function initializePython(disposables: Disposable[]): Promise<void>
         if (api) {
             disposables.push(
                 api.environments.onDidChangeActiveEnvironmentPath((e) => {
-                    vscode.window.showInformationMessage('You changed the python venv!');
                     onDidChangePythonInterpreterEvent.fire({ path: [e.path], resource: e.resource?.uri });
                 }),
             );
@@ -348,3 +352,27 @@ export async function installPythonPackagesInEnv(
     return result.exitCode === 0;
 }
 
+export const getPathToActivePythonInterpreter = async (): Promise<string | undefined> => {
+    const projectRoot = await getProjectRoot();
+    const workspaceSettings = await getWorkspaceSettings(SETTINGS_NAMESPACE, projectRoot, true);
+    return workspaceSettings.interpreter[0];
+}
+
+export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolean> => {
+    const pathToActivePythonInterpreter: string | undefined = await getPathToActivePythonInterpreter();
+    const interpreterNotSet = pathToActivePythonInterpreter === undefined || pathToActivePythonInterpreter.length === 0;
+    
+    if (interpreterNotSet) {
+        updateStatus(vscode.l10n.t('Please select a Python interpreter.'), vscode.LanguageStatusSeverity.Error);
+        traceError(
+            'Python interpreter missing:\r\n' +
+                '[Option 1] Select python interpreter using the ms-python.python.\r\n' +
+                `[Option 2] Set an interpreter using "${SETTINGS_NAMESPACE}.interpreter" setting.\r\n`,
+            'Please use Python 3.8 or greater.',
+        );
+        // display an error message to the user
+        vscode.window.showErrorMessage(`[${consts.EXTENSION_NAME}] Please select a Python interpreter.`);
+        return false;
+    } 
+    return true;
+}

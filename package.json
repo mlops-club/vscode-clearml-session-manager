@@ -14,12 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "clearml-session-manager.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "clearml-session-manager.startSession",
-        "title": "Start ClearML Session"
+        "command": "clearml-session-manager.installPythonDependencies",
+        "title": "ClearML: Install Python Dependencies"
       }
     ]
   },

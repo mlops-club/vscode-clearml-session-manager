@@ -76,7 +76,7 @@ export async function getWorkspaceSettings(
         }
     }
 
-    const workspaceSetting = {
+    const workspaceSettings = {
         cwd: workspace.uri.fsPath,
         workspace: workspace.uri.toString(),
         args: resolveVariables(config.get<string[]>('args', []), workspace),
@@ -85,7 +85,7 @@ export async function getWorkspaceSettings(
         importStrategy: config.get<string>('importStrategy', 'fromEnvironment'),
         showNotifications: config.get<string>('showNotifications', 'off'),
     };
-    return workspaceSetting;
+    return workspaceSettings;
 }
 
 function getGlobalValue<T>(config: WorkspaceConfiguration, key: string): T | undefined {
