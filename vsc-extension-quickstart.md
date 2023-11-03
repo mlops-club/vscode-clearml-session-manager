@@ -11,7 +11,9 @@
 
 ## Setup
 
-*  the recommended extensions (amodio.tsl-problem-matcher and dbaeumer.vscode-eslint)
+*  Install these recommended VS Code extensions: 
+   *  TypeScript + Webpack Problem Matchers (extension ID: `amodio.tsl-problem-matcher`)
+   *  ESLint (extension ID: `dbaeumer.vscode-eslint`)
 
 
 ## Get up and running straight away

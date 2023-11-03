@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import { ISettings, getExtensionSettings, getInterpreterFromSetting } from './common/settings';
 import { registerLogger, traceLog } from './common/logging';
 import { createOutputChannel } from './common/vscodeapi';
-import * as consts from "./common/constants"
+import * as consts from "./common/constants";
 import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 
@@ -30,11 +30,11 @@ export async function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		await ensureClearMlSessionCliIsAvailable();
 		vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] Python dependencies installed successfully!`);
-	})
+	});
 
 	context.subscriptions.push(disposable);
 
-	await loadPythonExtension(context)
+	await loadPythonExtension(context);
 }
 
 // This method is called when your extension is deactivated
@@ -57,4 +57,4 @@ const loadPythonExtension = async (context: vscode.ExtensionContext) => {
 		await initializePython(context.subscriptions);
 		traceLog(`Python extension loaded`);
 	}
-}
+};
