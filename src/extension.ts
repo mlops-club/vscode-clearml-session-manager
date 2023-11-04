@@ -44,6 +44,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	const clearmlSessionsTreeProvider = new ClearMlSessionsTreeDataProvider(rootPath);
 	vscode.window.registerTreeDataProvider('clearmlSessions', clearmlSessionsTreeProvider);
+	vscode.commands.registerCommand('clearmlSessions.refreshEntry', () =>
+		clearmlSessionsTreeProvider.refresh()
+	);
 	
 
 	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
