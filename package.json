@@ -17,6 +17,10 @@
         {
           "id": "nodeDependencies",
           "name": "Node Dependencies"
+        },
+        {
+          "id": "clearmlSessions",
+          "name": "ClearML Sessions"
         }
       ]
     },
@@ -24,6 +28,14 @@
       {
         "command": "clearml-session-manager.installPythonDependencies",
         "title": "ClearML: Install Python Dependencies"
+      },
+      {
+        "command": "nodeDependencies.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
       }
     ]
   },

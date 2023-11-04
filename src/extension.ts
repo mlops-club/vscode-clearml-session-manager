@@ -1,3 +1,4 @@
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -8,10 +9,25 @@ import * as consts from "./common/constants"
 import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 import { NodeDependenciesProvider } from './common/ui/tree-view';
+import { ClearMlSessionsTreeDataProvider } from './common/ui/clearml-tree-view';
 
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+
+/**
+Fake data next step:
+-- Go through each input from the api call (or this fake data) and create tree nodes
+
+ {
+	SessionId : 'abcdef',
+	CPU: 8,
+	GPU: 1,
+	RAM: '4 GB',
+	Queue: 'on-prem'
+ }
+ */
+
 export async function activate(context: vscode.ExtensionContext) {
 
 	const rootPath =
@@ -25,6 +41,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
 		nodeDependenciesProvider.refresh()
 	);
+	
+	const clearmlSessionsTreeProvider = new ClearMlSessionsTreeDataProvider(rootPath);
+	vscode.window.registerTreeDataProvider('clearmlSessions', clearmlSessionsTreeProvider);
 	
 
 	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
