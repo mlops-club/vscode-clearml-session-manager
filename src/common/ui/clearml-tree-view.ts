@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Task } from '../clearml/models/tasks';
+import { fetchInteractiveSessions } from '../clearml/fetch-interactive-sessions';
 
 export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<ClearmlSession> {
-  constructor(private workspaceRoot: string) {}
+  constructor(private workspaceRoot: string, public interactiveSessions: Task[] = []) {}
 
   private _onDidChangeTreeData: vscode.EventEmitter<ClearmlSession | undefined | null | void> = new vscode.EventEmitter<ClearmlSession | undefined | null | void>();
   readonly onDidChangeTreeData: vscode.Event<ClearmlSession | undefined | null | void> = this._onDidChangeTreeData.event;
 
-  refresh(): void {
+  async refresh(): Promise<void> {
+    this.interactiveSessions = await fetchInteractiveSessions();
     this._onDidChangeTreeData.fire();
   }
 
@@ -20,31 +23,17 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
     console.log('getChildren, element: ', element);
 
     if (!element) {
-        return Promise.resolve([
-            new ClearmlSession(
-                'session1',
-                '1.0.0',
-                vscode.TreeItemCollapsibleState.Collapsed,
-                1
-            ),
-            new ClearmlSession(
-                'session2',
-                '1.0.0',
-                vscode.TreeItemCollapsibleState.Collapsed,
-                1
-            ),
-            new ClearmlSession(
-                'session3',
-                '1.0.0',
-                vscode.TreeItemCollapsibleState.Collapsed,
-                1
-            ),
-        ]);
+        return Promise.resolve(
+          this.interactiveSessions.map((session: Task) => new ClearmlSession(
+            session.id,
+            session.user.name,
+            vscode.TreeItemCollapsibleState.None,
+            1
+          ))
+        )
     }
 
-    if (element.depth >= 1) {
-        return Promise.resolve([]);
-    }
+    return Promise.resolve([]);
 
     
     // if (!this.workspaceRoot) {

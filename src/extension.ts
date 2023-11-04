@@ -10,25 +10,18 @@ import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 import { NodeDependenciesProvider } from './common/ui/tree-view';
 import { ClearMlSessionsTreeDataProvider } from './common/ui/clearml-tree-view';
+// import { readAndExtractValues } from './common/clearml/hocon-parser';
+import * as parser from "@pushcorn/hocon-parser"
+import fs from 'fs';
+import { readClearMLAuthSettingsFromConfigFile } from './common/clearml/clearml-conf';
+import { ClearMLApiClient } from './common/clearml/api-client';
 
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 
-/**
-Fake data next step:
--- Go through each input from the api call (or this fake data) and create tree nodes
-
- {
-	SessionId : 'abcdef',
-	CPU: 8,
-	GPU: 1,
-	RAM: '4 GB',
-	Queue: 'on-prem'
- }
- */
-
 export async function activate(context: vscode.ExtensionContext) {
+
 
 	const rootPath =
 		vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
