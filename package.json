@@ -12,6 +12,14 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "nodeDependencies",
+          "name": "Node Dependencies"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "clearml-session-manager.installPythonDependencies",

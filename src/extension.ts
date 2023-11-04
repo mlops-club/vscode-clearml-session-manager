@@ -7,22 +7,36 @@ import { createOutputChannel } from './common/vscodeapi';
 import * as consts from "./common/constants"
 import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
+import { NodeDependenciesProvider } from './common/ui/tree-view';
 
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
 
+	const rootPath =
+		vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+			? vscode.workspace.workspaceFolders[0].uri.fsPath
+			: undefined;
+			
+	console.log(`rootPath: ${rootPath}`);
+	const nodeDependenciesProvider = new NodeDependenciesProvider(rootPath);
+	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
+	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
+		nodeDependenciesProvider.refresh()
+	);
+	
+
 	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
 
-    // Setup logging
-    const outputChannel = createOutputChannel(consts.EXTENSION_NAME);
-    context.subscriptions.push(outputChannel, registerLogger(outputChannel));
+	// Setup logging
+	const outputChannel = createOutputChannel(consts.EXTENSION_NAME);
+	context.subscriptions.push(outputChannel, registerLogger(outputChannel));
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "clearml-session-manager" is now active!');
-	
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -38,9 +52,9 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
- 
+
 /**
  * Ensure the Python extension is installed.
  * 
