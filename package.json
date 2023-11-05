@@ -39,11 +39,29 @@
       },
       {
         "command": "clearmlSessions.refreshEntry",
-        "title": "Refresh",
+        "title": "ClearML: Refresh",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
+      },
+      {
+        "command": "clearmlSessions.openInBrowser",
+        "title": "View in browser",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        },
+        "group": "navigation"
+      },
+      {
+        "command": "clearmlSessions.attachToSession",
+        "title": "Attach to session",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        },
+        "group": "navigation"
       }
     ],
     "menus": {
@@ -57,6 +75,16 @@
           "command": "clearmlSessions.refreshEntry",
           "when": "view == clearmlSessions",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "clearmlSessions.openInBrowser",
+          "when": "view == clearmlSessions"
+        },
+        {
+          "command": "clearmlSessions.attachToSession",
+          "when": "view == clearmlSessions"
         }
       ]
     }

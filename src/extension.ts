@@ -2,19 +2,20 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ISettings, getExtensionSettings, getInterpreterFromSetting } from './common/settings';
+import { ISettings, getExtensionSettings, getInterpreterFromSetting, getWorkspaceSettings } from './common/settings';
 import { registerLogger, traceLog } from './common/logging';
 import { createOutputChannel } from './common/vscodeapi';
 import * as consts from "./common/constants"
 import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 import { NodeDependenciesProvider } from './common/ui/tree-view';
-import { ClearMlSessionsTreeDataProvider } from './common/ui/clearml-tree-view';
+import { ClearMlSessionsTreeDataProvider, ClearmlSession } from './common/ui/clearml-tree-view';
 // import { readAndExtractValues } from './common/clearml/hocon-parser';
 import * as parser from "@pushcorn/hocon-parser"
 import fs from 'fs';
 import { readClearMLAuthSettingsFromConfigFile } from './common/clearml/clearml-conf';
 import { ClearMLApiClient } from './common/clearml/api-client';
+import { startDetachedSubprocess } from './common/shell';
 
 
 // This method is called when your extension is activated
@@ -40,6 +41,21 @@ export async function activate(context: vscode.ExtensionContext) {
 	vscode.commands.registerCommand('clearmlSessions.refreshEntry', () =>
 		clearmlSessionsTreeProvider.refresh()
 	);
+
+	vscode.commands.registerCommand('clearmlSessions.openInBrowser', (session: ClearmlSession) => {
+		console.log('openInBrowser, session: ', session);
+		const clearmlTaskUrlinUi = `https://app.clear.ml/projects/${session.projectId}/experiments/${session.taskId}/execution?columns=selected&columns=type&columns=name&columns=tags&columns=status&columns=project.name&columns=users&columns=started&columns=last_update&columns=last_iteration&columns=parent.name&order=-last_update&filter=`
+		vscode.env.openExternal(vscode.Uri.parse(clearmlTaskUrlinUi));
+	})
+
+	vscode.commands.registerCommand('clearmlSessions.attachToSession', async (session: ClearmlSession) => {
+		await initializePython(context.subscriptions);
+		const settings = await getWorkspaceSettings(consts.SETTINGS_NAMESPACE, vscode.workspace.workspaceFolders![0], true)
+		const interpreterFpath: string = settings.interpreter[0]
+		startDetachedSubprocess(
+			interpreterFpath, ["-m", "clearml_session", "--attach", session.taskId], 
+		)
+	})
 	
 
 	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
