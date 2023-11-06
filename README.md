@@ -1,4 +1,26 @@
-# clearml-session-manager README
+# `clearml-session-manager`
+
+Demo video of how it works, so far [here](https://share.descript.com/view/g0SLQTN6kAk)
+
+[![Alt text](image.png)](https://share.descript.com/view/g0SLQTN6kAk)
+
+## Contributing
+
+Here are a few videos with progress updates. Watching these will step you through how we learned about authoring VS Code extensions and how we got to where we are now.
+
+1. ~30 min - [Announcing the hackathon project](https://share.descript.com/view/00uoQltZHWt)
+2. ~30 min - [How we got the extension to work with the Python interpreteer by forking the `vscode-black-formatter` extension](https://share.descript.com/view/yH3tagRokS4)
+3. ~45 min - [Everything we created/learned during the all-nighter hackathon](https://share.descript.com/view/DPuECWiE69B)
+   - how to hit the ClearML API
+   - how to read the `~/clearml.conf` file with TypeScript
+   - how we decided to hit the ClearML API from TypeScript rather than Python
+   - how we got the list items to show up in the sidebar
+4. [Pull request](https://github.com/mlops-club/vscode-clearml-session-manager/pull/3): giving ClearML it's own "View Container" i.e. item
+in the leftmost sidebar. And how we got our icons to show up
+in all the right places.
+4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://share.descript.com/view/dRoWrZI5NB3)
+
+<!-- # clearml-session-manager README
 
 This is the README for your extension "clearml-session-manager". After writing up a brief description, we recommend including the following sections.
 
@@ -68,4 +90,4 @@ You can author your README using Visual Studio Code. Here are some useful editor
 * [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
-**Enjoy!**
+**Enjoy!** -->
