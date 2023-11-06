@@ -23,6 +23,7 @@ import { startDetachedSubprocess } from './common/shell';
 
 export async function activate(context: vscode.ExtensionContext) {
 
+	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
 
 	const rootPath =
 		vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
@@ -50,9 +51,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		)
 	})
 	
-
-	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
-
 	// Setup logging
 	const outputChannel = createOutputChannel(consts.EXTENSION_NAME);
 	context.subscriptions.push(outputChannel, registerLogger(outputChannel));
@@ -71,7 +69,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable);
-
+	
+	await clearmlSessionsTreeProvider.refresh()
 	await loadPythonExtension(context);
 }
 
