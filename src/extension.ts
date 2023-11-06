@@ -29,13 +29,6 @@ export async function activate(context: vscode.ExtensionContext) {
 			? vscode.workspace.workspaceFolders[0].uri.fsPath
 			: undefined;
 			
-	console.log(`rootPath: ${rootPath}`);
-	const nodeDependenciesProvider = new NodeDependenciesProvider(rootPath);
-	vscode.window.registerTreeDataProvider('nodeDependencies', nodeDependenciesProvider);
-	vscode.commands.registerCommand('nodeDependencies.refreshEntry', () =>
-		nodeDependenciesProvider.refresh()
-	);
-	
 	const clearmlSessionsTreeProvider = new ClearMlSessionsTreeDataProvider(rootPath);
 	vscode.window.registerTreeDataProvider('clearmlSessions', clearmlSessionsTreeProvider);
 	vscode.commands.registerCommand('clearmlSessions.refreshEntry', () =>

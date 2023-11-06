@@ -12,12 +12,17 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
-    "views": {
-      "explorer": [
+    "viewsContainers": {
+      "activitybar": [
         {
-          "id": "nodeDependencies",
-          "name": "Node Dependencies"
-        },
+          "id": "clearml-explorer-view-container",
+          "title": "ClearML Sessions",
+          "icon": "resources/clearml-logo.svg"
+        }
+      ]
+    },
+    "views": {
+      "clearml-explorer-view-container": [
         {
           "id": "clearmlSessions",
           "name": "ClearML Sessions"
@@ -28,14 +33,6 @@
       {
         "command": "clearml-session-manager.installPythonDependencies",
         "title": "ClearML: Install Python Dependencies"
-      },
-      {
-        "command": "nodeDependencies.refreshEntry",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
       },
       {
         "command": "clearmlSessions.refreshEntry",
@@ -66,11 +63,6 @@
     ],
     "menus": {
       "view/title": [
-        {
-          "command": "nodeDependencies.refreshEntry",
-          "when": "view == nodeDependencies",
-          "group": "navigation"
-        },
         {
           "command": "clearmlSessions.refreshEntry",
           "when": "view == clearmlSessions",

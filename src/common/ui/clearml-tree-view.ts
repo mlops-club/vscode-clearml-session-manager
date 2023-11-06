@@ -4,7 +4,7 @@ import * as path from 'path';
 import { Task } from '../clearml/models/tasks';
 import { fetchInteractiveSessions } from '../clearml/fetch-interactive-sessions';
 
-export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<ClearmlSession> {
+export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<ClearmlSession | vscode.TreeItem> {
   constructor(private workspaceRoot: string, public interactiveSessions: Task[] = []) { }
 
   private _onDidChangeTreeData: vscode.EventEmitter<ClearmlSession | undefined | null | void> = new vscode.EventEmitter<ClearmlSession | undefined | null | void>();
@@ -19,15 +19,17 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
     return element;
   }
 
-  getChildren(element?: ClearmlSession): Thenable<ClearmlSession[]> {
+  getChildren(element?: ClearmlSession): Thenable<ClearmlSession[] | vscode.TreeItem[]> {
     console.log('getChildren, element: ', element);
 
+    // when the tree view is first opened, element is undefined. This means
+    // this function needs to return the top-level items.
     if (!element) {
       return Promise.resolve(
         this.interactiveSessions.map((session: Task) => new ClearmlSession(
           `Session ID: ${session.id.slice(0, 8)}`,
           session.name,
-          vscode.TreeItemCollapsibleState.None,
+          vscode.TreeItemCollapsibleState.Collapsed,
           1,
           session.project.id,
           session.id,
@@ -36,12 +38,20 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
       )
     }
 
-    return Promise.resolve([]);
-
+    // otherwise, the element is a ClearmlSession, so expanding it should reveal
+    // a list of its details. We show the details as tree items nested underneath.
+    const clearmlSessionDetails: vscode.TreeItem[] = (element as ClearmlSession).getClearmlSessionDetailsAsTreeItems();
+    return Promise.resolve(clearmlSessionDetails);
   }
 }
 
 export class ClearmlSession extends vscode.TreeItem {
+
+  iconPath = {
+    light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
+    dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
+  };
+
   constructor(
     public readonly label: string,
     private version: string,
@@ -63,10 +73,20 @@ export class ClearmlSession extends vscode.TreeItem {
     `
   }
 
-  iconPath = {
-    light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-    dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-  };
+  getClearmlSessionDetailsAsTreeItems = (): vscode.TreeItem[] => {
+    
+    
+    const makeTreeItem = (label: string, description: string): vscode.TreeItem => {
+      const treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
+      treeItem.description = description;
+      return treeItem;
+    }
 
 
+    return [
+      makeTreeItem(`Project ID`, this.projectId),
+      makeTreeItem(`Task ID`, this.taskId),
+      makeTreeItem(`Comment`, this.comment),
+    ]
+  }
 }
