@@ -16,6 +16,7 @@ import fs from 'fs';
 import { readClearMLAuthSettingsFromConfigFile } from './common/clearml/clearml-conf';
 import { ClearMLApiClient } from './common/clearml/api-client';
 import { startDetachedSubprocess } from './common/shell';
+import { connectToRemoteSSH } from './common/remote-ssh-connect';
 
 
 // This method is called when your extension is activated
@@ -43,12 +44,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	})
 
 	vscode.commands.registerCommand('clearmlSessions.attachToSession', async (session: ClearmlSession) => {
-		await initializePython(context.subscriptions);
-		const settings = await getWorkspaceSettings(consts.SETTINGS_NAMESPACE, vscode.workspace.workspaceFolders![0], true)
-		const interpreterFpath: string = settings.interpreter[0]
-		startDetachedSubprocess(
-			interpreterFpath, ["-m", "clearml_session", "--attach", session.taskId], 
-		)
+		// await initializePython(context.subscriptions);
+		// const settings = await getWorkspaceSettings(consts.SETTINGS_NAMESPACE, vscode.workspace.workspaceFolders![0], true)
+		// const interpreterFpath: string = settings.interpreter[0]
+		// startDetachedSubprocess(
+		// 	interpreterFpath, ["-m", "clearml_session", "--attach", session.taskId], 
+		// )
+		await connectToRemoteSSH();
 	})
 	vscode.commands.registerCommand('clearmlSessions.copyValueToClipboard', async (treeItem: vscode.TreeItem) => {
 		if (treeItem.description) {
