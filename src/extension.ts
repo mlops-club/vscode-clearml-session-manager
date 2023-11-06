@@ -23,6 +23,7 @@ import { startDetachedSubprocess } from './common/shell';
 
 export async function activate(context: vscode.ExtensionContext) {
 
+	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
 
 	const rootPath =
 		vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
@@ -37,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.registerCommand('clearmlSessions.openInBrowser', (session: ClearmlSession) => {
 		console.log('openInBrowser, session: ', session);
-		const clearmlTaskUrlinUi = `https://app.clear.ml/projects/${session.projectId}/experiments/${session.taskId}/execution?columns=selected&columns=type&columns=name&columns=tags&columns=status&columns=project.name&columns=users&columns=started&columns=last_update&columns=last_iteration&columns=parent.name&order=-last_update&filter=`
+		const clearmlTaskUrlinUi = `https://app.clear.ml/projects/${session.sessionTask.project.id}/experiments/${session.sessionTask.id}/execution?columns=selected&columns=type&columns=name&columns=tags&columns=status&columns=project.name&columns=users&columns=started&columns=last_update&columns=last_iteration&columns=parent.name&order=-last_update&filter=`
 		vscode.env.openExternal(vscode.Uri.parse(clearmlTaskUrlinUi));
 	})
 
@@ -49,10 +50,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			interpreterFpath, ["-m", "clearml_session", "--attach", session.taskId], 
 		)
 	})
+	vscode.commands.registerCommand('clearmlSessions.copyValueToClipboard', async (treeItem: vscode.TreeItem) => {
+		if (treeItem.description) {
+			await vscode.env.clipboard.writeText(treeItem.description as string);
+			vscode.window.showInformationMessage(`${treeItem.label} was copied to your clipboard`);
+		}
+	});
 	
-
-	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
-
 	// Setup logging
 	const outputChannel = createOutputChannel(consts.EXTENSION_NAME);
 	context.subscriptions.push(outputChannel, registerLogger(outputChannel));
@@ -71,7 +75,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable);
-
+	
+	await clearmlSessionsTreeProvider.refresh()
 	await loadPythonExtension(context);
 }
 

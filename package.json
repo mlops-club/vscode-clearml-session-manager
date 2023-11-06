@@ -36,29 +36,22 @@
       },
       {
         "command": "clearmlSessions.refreshEntry",
-        "title": "ClearML: Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
+        "title": "ClearML: Refresh sessions",
+        "icon": "$(refresh)"
       },
       {
         "command": "clearmlSessions.openInBrowser",
         "title": "View in browser",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        },
-        "group": "navigation"
+        "icon": "$(link-external)"
       },
       {
         "command": "clearmlSessions.attachToSession",
         "title": "Attach to session",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        },
-        "group": "navigation"
+        "icon": "$(debug-start)"
+      },
+      {
+        "command": "clearmlSessions.copyValueToClipboard",
+        "title": "Copy to clipboard"
       }
     ],
     "menus": {
@@ -72,11 +65,18 @@
       "view/item/context": [
         {
           "command": "clearmlSessions.openInBrowser",
-          "when": "view == clearmlSessions"
+          "when": "view == clearmlSessions && viewItem == top-level-clearml-session-tree-item",
+          "group": "inline"
         },
         {
           "command": "clearmlSessions.attachToSession",
-          "when": "view == clearmlSessions"
+          "when": "view == clearmlSessions && viewItem == top-level-clearml-session-tree-item",
+          "group": "inline"
+        },
+        {
+          "command": "clearmlSessions.copyValueToClipboard",
+          "when": "view == clearmlSessions && viewItem == clearml-session-detail-tree-item",
+          "group": "inline"
         }
       ]
     }
@@ -115,3 +115,4 @@
     "vscode-languageclient": "^9.0.1"
   }
 }
+

@@ -26,14 +26,10 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
     // this function needs to return the top-level items.
     if (!element) {
       return Promise.resolve(
-        this.interactiveSessions.map((session: Task) => new ClearmlSession(
-          `Session ID: ${session.id.slice(0, 8)}`,
-          session.name,
+        this.interactiveSessions.map((sessionTask: Task) => new ClearmlSession(
+          `Session`,
           vscode.TreeItemCollapsibleState.Collapsed,
-          1,
-          session.project.id,
-          session.id,
-          session.comment,
+          sessionTask,
         ))
       )
     }
@@ -47,46 +43,50 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
 
 export class ClearmlSession extends vscode.TreeItem {
 
-  iconPath = {
-    light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-    dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-  };
+  iconPath = new vscode.ThemeIcon("cloud");
+
+  // setting this value allows us to condition the context menu on the type of tree item like so:
+  // "when": "viewItem == top-level-clearml-session-tree-item"; this allows us, in the package.json,
+  // to distinguish between the top-level tree item and the details tree items (children of the top-level items)
+  contextValue = "top-level-clearml-session-tree-item"
 
   constructor(
     public readonly label: string,
-    private version: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly depth: number,
-    public readonly projectId: string,
-    public readonly taskId: string,
-    public readonly comment: string
+    public readonly sessionTask: Task,
+    
   ) {
     super(label, collapsibleState);
-    this.description = this.version;
-    this.depth = depth;
-    this.projectId = projectId;
-    this.taskId = taskId;
+
+    this.description = sessionTask.id
+
     this.tooltip = `
-    Comment: ${this.comment}
-    Project ID: ${this.projectId}
-    Task ID: ${this.taskId}
+    Comment: ${sessionTask.comment}
+    Project ID: ${sessionTask.project.id}
+    Task ID: ${sessionTask.id}
     `
   }
 
   getClearmlSessionDetailsAsTreeItems = (): vscode.TreeItem[] => {
-    
-    
     const makeTreeItem = (label: string, description: string): vscode.TreeItem => {
       const treeItem = new vscode.TreeItem(label, vscode.TreeItemCollapsibleState.None);
       treeItem.description = description;
+      treeItem.contextValue = "clearml-session-detail-tree-item";
       return treeItem;
     }
 
-
     return [
-      makeTreeItem(`Project ID`, this.projectId),
-      makeTreeItem(`Task ID`, this.taskId),
-      makeTreeItem(`Comment`, this.comment),
+      makeTreeItem(`Project ID`, this.sessionTask.project.id),
+      makeTreeItem(`Task ID`, this.sessionTask.id),
+      makeTreeItem(`Comment`, this.sessionTask.comment),
+      makeTreeItem(`Active duration`, String(this.sessionTask.active_duration) + " minutes"),
+      makeTreeItem(`Status`, this.sessionTask.status),
+      makeTreeItem(`Type`, this.sessionTask.type),
+      makeTreeItem(`Created`, this.sessionTask.created),
+      makeTreeItem(`Last update`, this.sessionTask.last_update),
+      makeTreeItem(`Last iteration`, String(this.sessionTask.last_iteration)),
+      makeTreeItem(`Last worker`, this.sessionTask.last_worker),
+      makeTreeItem(`Queue `, this.sessionTask.execution.queue.id)
     ]
   }
 }
