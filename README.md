@@ -1,8 +1,23 @@
 # `vscode-clearml-session-manager`
 
-Demo video of how it works, so far [here](https://share.descript.com/view/g0SLQTN6kAk)
+A VS Code extension for listing, creating, deleting, and connecting to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme). ClearML is self-hostable and has a free SaaS-hosted plan, meaning you can get a world-class data science development environment for _free_.
 
-[![Alt text](image.png)](https://share.descript.com/view/g0SLQTN6kAk)
+> 💬 We're looking for contributors to prep for our first release! See the [contributing](#contributing) section below.
+
+## Watch and learn
+
+- 2-minute [explainer video](https://share.descript.com/view/pjgR4yC04ai?transcript=false) of why DS should develop on remote workstations
+- 60-second demo video of how it works, so far [here](https://share.descript.com/view/g0SLQTN6kAk)
+
+[![soundless demo](https://github.com/mlops-club/vscode-clearml-session-manager/assets/32227767/e3b408d5-01c2-45b2-b401-09eae0e21de8)](https://share.descript.com/view/g0SLQTN6kAk)
+
+
+## How this extension fits into a Cloud or on-prem Architecture
+
+<img width="600" alt="image" src="https://github.com/mlops-club/vscode-clearml-session-manager/assets/32227767/6f01df5a-2646-4716-aa00-bb88ae290fd0">
+
+<img width="600" alt="image" src="https://github.com/mlops-club/vscode-clearml-session-manager/assets/32227767/e65d7e7d-ae81-4067-9384-ea0311d273e9">
+<img width="600" alt="image" src="https://github.com/mlops-club/vscode-clearml-session-manager/assets/32227767/72a526d8-21b9-4831-9699-55a44284fd55">
 
 ## Contributing
 
