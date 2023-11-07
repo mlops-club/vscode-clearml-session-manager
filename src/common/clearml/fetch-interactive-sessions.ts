@@ -8,7 +8,8 @@ const getPathToClearmlConfigFile = (): string => {
 }
 
 export const fetchInteractiveSessions = async (): Promise<Task[]> => {
-    const clearmlConfigFpath: string = getPathToClearmlConfigFile();
+    // const clearmlConfigFpath: string = getPathToClearmlConfigFile();
+    const clearmlConfigFpath = "/Users/ericriddoch/repos/extra/hello-world-vscode-ext/clearml-session-manager/volumes/opt/clearml/config/clearml.conf";
     const clearmlClient = ClearMLApiClient.fromConfigFile(clearmlConfigFpath);
     await clearmlClient.auth();
     const interactiveSessions = await listInteractiveSessions(clearmlClient);

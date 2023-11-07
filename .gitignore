@@ -5,3 +5,7 @@ node_modules
 *.vsix
 *ipynb*
 *venv*
+volumes/opt/clearml/agent
+volumes/opt/clearml/data
+volumes/opt/clearml/logs
+volumes/usr
