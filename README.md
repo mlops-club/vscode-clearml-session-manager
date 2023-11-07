@@ -21,6 +21,13 @@ A VS Code extension for listing, creating, deleting, and connecting to [ClearML 
 
 ## Contributing
 
+### Running the extension locally
+
+VS Code makes it really easy to run extensions and try out code changes:
+
+1. be sure you have NodeJS installed, some had issues because they had the wrong Node version
+2. go to the `src/extension.ts` file and press `F5` to start a debugging session 
+
 ### Getting up to speed on ClearML and writing VS Code Extensions
 
 Here are a few videos with progress updates. Watching these will step you through how we learned about authoring VS Code extensions and how we got to where we are now.
