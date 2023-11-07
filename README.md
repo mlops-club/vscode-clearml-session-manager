@@ -1,10 +1,12 @@
-# `clearml-session-manager`
+# `vscode-clearml-session-manager`
 
 Demo video of how it works, so far [here](https://share.descript.com/view/g0SLQTN6kAk)
 
 [![Alt text](image.png)](https://share.descript.com/view/g0SLQTN6kAk)
 
 ## Contributing
+
+### Getting up to speed on ClearML and writing VS Code Extensions
 
 Here are a few videos with progress updates. Watching these will step you through how we learned about authoring VS Code extensions and how we got to where we are now.
 
@@ -19,6 +21,41 @@ Here are a few videos with progress updates. Watching these will step you throug
 in the leftmost sidebar. And how we got our icons to show up
 in all the right places.
 4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://share.descript.com/view/dRoWrZI5NB3)
+
+### Roadmap
+
+> Items marked with ✨ are high-impact, and important for our first release
+
+- [ ] Query the ClearML API to display the most useful data about each session
+   - [ ] Total CPU cores
+   - [ ] Public IP address of the worker
+   - [ ] Private IP address of the worker
+   - [ ] Total RAM
+   - [ ] Queue name
+   - [ ] Username/email of creator
+   - [ ] Human-readable format of how long it's been alive, e.g. 1d 2h 5m
+- [ ] Add support for `settings.json` settings including
+   - [ ] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
+      - [ ] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
+   - [ ] `clearml.sessionPresets` (array of objects), lets you your favorite sets of arguments to the `clearml-session` CLI
+- [ ] Add a `+` button that allows you to create a ClearML session
+   - [ ] Implement a way for users to define and select presets for `clearml-sessions`. Ideas:
+      - [ ] Use something like `launch.json`, basically, have users define presets in a JSON file at `.vscode/clearml.json`
+      - [ ] Have a UI form to collect user input for the `clearml-session` arguments, e.g. by using a `Webview`. Do API calls to provide the user with autocompletion on anything we can, e.g. for which queues are available
+   - [ ] Start the `clearml-session` as a subprocess
+   - [ ] Log the exact `clearml-session` command somewhere that the user can see (useful for debugging and learning)
+   - [ ] Pop a message with a button allowing the user to follow along with the `clearml-session` logs
+   - [ ] Parse the logs of the subprocess to detect
+      - [ ] ✨ Failure: When the process is stuck in a retry loop because of SSH connectivity issues
+         - [ ] ✨ React to failure by killing the subprocess (maybe after 3 retries) and alerting the user, offering to show them the logs
+      - [ ] ✨ Success: Capture the connection host info, e.g. `ssh root@localhost -p 8022` and the password, e.g. `[password: pass]`
+      - [ ] ✨ Success: the process hangs because the SSH tunnel has been left open
+         - [ ] React to success by automatically opening a new VS Code window
+- [ ] ✨ Add a `docker-compose.yaml` and instructions for hosting ClearML locally for development. Here's their [official reference compose file](https://github.com/allegroai/clearml-server/blob/master/docker/docker-compose.yml).
+- [ ] Add automated tests
+   - [ ] ✨ test API call logic by running the `docker-compose.yaml`
+   - [ ] test parsing logic of the `clearml.conf` file
+- [ ] Suggestion from ClearML: shutdown idle instances. Determine which are idle by querying for the host metrics, e.g. CPU utilization.
 
 <!-- # clearml-session-manager README
 
