@@ -32,9 +32,9 @@ VS Code makes it really easy to run extensions and try out code changes:
 
 Here are a few videos with progress updates. Watching these will step you through how we learned about authoring VS Code extensions and how we got to where we are now.
 
-1. ~30 min - [Announcing the hackathon project](https://share.descript.com/view/00uoQltZHWt)
-2. ~30 min - [How we got the extension to work with the Python interpreteer by forking the `vscode-black-formatter` extension](https://share.descript.com/view/yH3tagRokS4)
-3. ~45 min - [Everything we created/learned during the all-nighter hackathon](https://share.descript.com/view/DPuECWiE69B)
+1. ~30 min - [Announcing the hackathon project](https://youtu.be/YddCUa-5yVI)
+2. ~30 min - [How we got the extension to work with the Python interpreteer by forking the `vscode-black-formatter` extension](https://youtu.be/_FyadEJFRiM)
+3. ~45 min - [Everything we created/learned during the all-nighter hackathon](https://youtu.be/fKTldHV_0Y0)
    - how to hit the ClearML API
    - how to read the `~/clearml.conf` file with TypeScript
    - how we decided to hit the ClearML API from TypeScript rather than Python
@@ -42,7 +42,7 @@ Here are a few videos with progress updates. Watching these will step you throug
 4. [Pull request](https://github.com/mlops-club/vscode-clearml-session-manager/pull/3): giving ClearML it's own "View Container" i.e. item
 in the leftmost sidebar. And how we got our icons to show up
 in all the right places.
-4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://share.descript.com/view/dRoWrZI5NB3)
+4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://youtu.be/xmvlbjE0F1g)
 
 ### Roadmap
 
