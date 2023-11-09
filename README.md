@@ -73,6 +73,12 @@ in all the right places.
 6. start the VS Code extension by opening `./src/extension.ts` and pressing `F5` on your keyboard
 7. The extension should load successfully, but it won't have any sessions. To start a session, run
    ```bash
+   # install the clearml-session CLI into a Python virtual environment
+   python -m venv ./venv/
+   source ./venv/bin/activate
+   npm run install-python-deps
+
+   # execute the clearml-session CLI to start a session
    npm run start-clearml-session
    ```
    This will take some time to run. While it loads, you should be able to visit
