@@ -32,14 +32,14 @@ services:
       CLEARML__apiserver__pre_populate__artifacts_path: "/mnt/fileserver"
       CLEARML__services__async_urls_delete__enabled: "true"
       # these values come from here: https://clear.ml/docs/latest/docs/deploying_clearml/clearml_server_security/#example-using-docker-compose
-      # CLEARML__SECURE__HTTP__SESSION_SECRET__APISERVER: "test1 test2 test3 test4 test5 test6"
-      # CLEARML__SECURE__AUTH__TOKEN_SECRET: "new-secret-string"
-      CLEARML__SECURE__CREDENTIALS__APISERVER__USER_KEY: "test1 test2 test3 test4 test5 test6"
-      CLEARML__SECURE__CREDENTIALS__APISERVER__USER_SECRET: "test1 test2 test3 test4 test5 test6"
-      # CLEARML__SECURE__CREDENTIALS__WEBSERVER__USER_KEY: "new-key-string"
-      # CLEARML__SECURE__CREDENTIALS__WEBSERVER__USER_SECRET: "new-secret-string"
-      # CLEARML__SECURE__CREDENTIALS__TESTS__USER_KEY: "new-key-string"
-      # CLEARML__SECURE__CREDENTIALS__TESTS__USER_SECRET: "new-secret-string"
+      # CLEARML__SECURE__HTTP__SESSION_SECRET__APISERVER: "NXC9QMHYXP95JPWEORC4"
+      # CLEARML__SECURE__AUTH__TOKEN_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"
+      # CLEARML__SECURE__CREDENTIALS__APISERVER__USER_KEY: "NXC9QMHYXP95JPWEORC4"  # must be 30 chars
+      # CLEARML__SECURE__CREDENTIALS__APISERVER__USER_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"  # must be 50-60 chars
+      # CLEARML__SECURE__CREDENTIALS__WEBSERVER__USER_KEY: "NXC9QMHYXP95JPWEORC4"
+      # CLEARML__SECURE__CREDENTIALS__WEBSERVER__USER_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"
+      # CLEARML__SECURE__CREDENTIALS__TESTS__USER_KEY: "NXC9QMHYXP95JPWEORC4"
+      # CLEARML__SECURE__CREDENTIALS__TESTS__USER_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"
     ports:
       - "8008:8008"
     networks:
@@ -179,8 +179,8 @@ services:
       CLEARML_WEB_HOST: ${CLEARML_WEB_HOST:-http://webserver:8080}
       CLEARML_API_HOST: http://apiserver:8008
       CLEARML_FILES_HOST: ${CLEARML_FILES_HOST:-http://fileserver:8081}
-      CLEARML_API_ACCESS_KEY: ${CLEARML_API_ACCESS_KEY:-test1 test2 test3 test4 test5 test6}
-      CLEARML_API_SECRET_KEY: ${CLEARML_API_SECRET_KEY:-test1 test2 test3 test4 test5 test6}
+      CLEARML_API_ACCESS_KEY: ${CLEARML_API_ACCESS_KEY:-EGRTCO8JMSIGI6S39GTP43NFWXDQOW}
+      CLEARML_API_SECRET_KEY: ${CLEARML_API_SECRET_KEY:-x!XTov_G-#vspE*Y(h$Anm&DIc5Ou-F)jsl$PdOyj5wG1&E!Z8}
       CLEARML_AGENT_GIT_USER: ${CLEARML_AGENT_GIT_USER}
       CLEARML_AGENT_GIT_PASS: ${CLEARML_AGENT_GIT_PASS}
       CLEARML_AGENT_UPDATE_VERSION: ${CLEARML_AGENT_UPDATE_VERSION:->=0.17.0}

@@ -1,9 +1,20 @@
 import fs from 'fs';
+// import { parseHocon } from 'hocon-parser';
+import { getPathToActivePythonInterpreter } from '../python';
+import { parseHoconFileWithPyhocon } from './hocon';
+import { ClearMLConfig } from './models/clearml-config';
 
-export interface ClearMLConfig {
-    api_server: string | null;
-    access_key: string | null;
-    secret_key: string | null;
+export interface ClearMLAuthConfig {
+    api_server: string;
+    access_key: string;
+    secret_key: string;
+}
+
+export const functionReadClearmlConfigFile = async (clearmlConfFpath: string): Promise<ClearMLConfig> => {
+    const pythonInterpreterFpath: string = (await getPathToActivePythonInterpreter() as string)
+    const clearmlConfig = await parseHoconFileWithPyhocon(pythonInterpreterFpath, clearmlConfFpath);
+    console.log(clearmlConfig)
+    return clearmlConfig;
 }
 
 /**
@@ -11,31 +22,12 @@ export interface ClearMLConfig {
  * @param filePath - The path to the HOCON file.
  * @returns An object containing the extracted values.
  */
-export function readClearMLAuthSettingsFromConfigFile(filePath: string): ClearMLConfig {
-    const content = fs.readFileSync(filePath, 'utf-8');
-    return extractClearMLConfigFromHOCON(content);
-}
-
-
-/**
- * Extract values from a HOCON string.
- * @param content - The HOCON content.
- * @returns An object containing the extracted values.
- */
-function extractClearMLConfigFromHOCON(content: string): ClearMLConfig {
-    const apiServerMatch = content.match(/api_server:\s*(https?:\/\/)?([^\s]+)/);
-    const accessKeyMatch = content.match(/"access_key":\s*"([^"]*)"/);
-    const secretKeyMatch = content.match(/"secret_key":\s*"([^"]*)"/);
-
-    // Concatenate the scheme and the server address if the scheme is captured
-    const apiServer = apiServerMatch ? (apiServerMatch[1] || '') + apiServerMatch[2] : null;
-
+export async function readClearMLAuthSettingsFromConfigFile(clearmlConfFpath: string): Promise<ClearMLAuthConfig> {
+    const clearmlConfig: any = await functionReadClearmlConfigFile(clearmlConfFpath)
     return {
-        // Include the scheme in the api_server if it's there
-        api_server: apiServer,
-        // Use [1] for both access_key and secret_key as they are the first captured group
-        access_key: accessKeyMatch ? accessKeyMatch[1] : null,
-        secret_key: secretKeyMatch ? secretKeyMatch[1] : null
-    };
+        api_server: clearmlConfig.api.api_server,
+        access_key: clearmlConfig.api.credentials.access_key,
+        secret_key: clearmlConfig.api.credentials.secret_key
+    }
 }
 

@@ -1,16 +1,21 @@
+import path from "path";
 import { ClearMLApiClient } from "./api-client";
 import { Task } from "./models/tasks";
 import * as os from 'os';
 
+
+
 const getPathToClearmlConfigFile = (): string => {
     const homeDir = os.homedir();
-    return `${homeDir}/clearml.conf`;
+    // return `${homeDir}/clearml.conf`;
+
+    // path to the dev clearml.conf
+    return path.join(__dirname, "..", "volumes", "opt", "clearml", "config", "clearml.conf")
 }
 
 export const fetchInteractiveSessions = async (): Promise<Task[]> => {
-    // const clearmlConfigFpath: string = getPathToClearmlConfigFile();
-    const clearmlConfigFpath = "/Users/ericriddoch/repos/extra/hello-world-vscode-ext/clearml-session-manager/volumes/opt/clearml/config/clearml.conf";
-    const clearmlClient = ClearMLApiClient.fromConfigFile(clearmlConfigFpath);
+    const clearmlConfigFpath: string = getPathToClearmlConfigFile();
+    const clearmlClient = await ClearMLApiClient.fromConfigFile(clearmlConfigFpath);
     await clearmlClient.auth();
     const interactiveSessions = await listInteractiveSessions(clearmlClient);
     return interactiveSessions;
