@@ -46,7 +46,6 @@ services:
       - backend
       - frontend
 
-
   elasticsearch:
     networks:
       - backend
@@ -173,7 +172,7 @@ services:
     volumes:
       - ./volumes/opt/clearml/logs:/var/log/clearml
 
-  agent-services:
+  agent-services-queue: &agent_defaults
     networks:
       - backend
     container_name: clearml-agent-services
@@ -182,7 +181,7 @@ services:
       restart_policy:
         condition: on-failure
     privileged: true
-    environment:
+    environment: &agent_defaults__environment
       CLEARML_HOST_IP: ${CLEARML_HOST_IP}
       CLEARML_WEB_HOST: ${CLEARML_WEB_HOST:-http://webserver:8080}
       CLEARML_API_HOST: http://apiserver:8008
@@ -200,7 +199,7 @@ services:
       AZURE_STORAGE_KEY: ${AZURE_STORAGE_KEY:-}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
       CLEARML_WORKER_ID: "clearml-services"
-      CLEARML_AGENT_DOCKER_HOST_MOUNT: "./volumes/opt/clearml/agent:/root/.clearml"
+      CLEARML_AGENT_DOCKER_HOST_MOUNT: "${PWD}/volumes/opt/clearml/agent:/root/.clearml"
       SHUTDOWN_IF_NO_ACCESS_KEY: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -209,6 +208,16 @@ services:
       - apiserver
     entrypoint: >
       bash -c "curl --retry 10 --retry-delay 10 --retry-connrefused 'http://apiserver:8008/debug.ping' && /usr/agent/entrypoint.sh"
+
+  agent-sessions-queue:
+    <<: *agent_defaults  # This is the alias
+    container_name: clearml-agent-sessions
+    environment:
+      <<: *agent_defaults__environment
+      CLEARML_AGENT_EXTRA_ARGS: "--queue sessions --create-queue --docker"
+      CLEARML_WORKER_ID: "clearml-sessions"
+    entrypoint: >
+      bash -c "curl --retry 10 --retry-delay 10 --retry-connrefused 'http://apiserver:8008/debug.ping' && /usr/agent/entrypoint.sh --cpu-only"
 
   minio:
     image: minio/minio

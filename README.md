@@ -39,6 +39,39 @@ in the leftmost sidebar. And how we got our icons to show up
 in all the right places.
 4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://share.descript.com/view/dRoWrZI5NB3)
 
+### Running the extension and ClearML completely locally
+
+> ⚠️ **Disclaimer:** expect problems if you try to run this project directly on Windows.
+> 
+> Install the Windows Subsystem for Linux 2 (WSL2) and develop from there if
+> you are running windows. 
+> 
+> The free videos in the [`Environment Setup` section of this
+> course](https://www.udemy.com/course/setting-up-the-linux-terminal-for-software-development/) walk you through how to do this, as well as most of step [1] below.
+
+1. install the prerequisites
+   1. `docker`, on MacOS and Windows (including WSL2), get [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   2. `docker-compose`, e.g. `brew install docker-compose`
+   3. NodeJS, e.g. with `brew install nodejs`
+   4. Python. `pyenv` is a good way to install Python.
+   5. VS Code
+2. clone the repo
+3. install the NodeJS dependencies
+   ```bash
+   # cd into the cloned repo and install the NodeJS dependencies
+   cd ./vscode-clearml-session-manager/
+   npm install
+   ```
+4. generate a set of ClearML API keys, these get placed at `./volumes/opt/clearml/config/clearml.conf`
+   ```bash
+   npm run create-clearml-credentials
+   ```
+5. start the ClearML server
+   ```bash
+   npm run start-clearml-server
+   ```
+6. start the VS Code extension by opening `./src/extension.ts` and pressing `F5` on your keyboard
+
 ### Roadmap
 
 > Items marked with ✨ are high-impact, and important for our first release

@@ -9,7 +9,13 @@ function install {
     python -m pip install --upgrade pip
 }
 
-function generate-clearml-credentials-for-compose {
+function start-clearml-server {
+  export LOCALHOST=`get-localhost`
+  source volumes/opt/clearml/config/generated_credentials.env
+  docker-compose up
+}
+
+function get-localhost {
     # Detect the OS
     OS=$(uname -s)
 
@@ -21,10 +27,21 @@ function generate-clearml-credentials-for-compose {
       export LOCALHOST=localhost
     fi
 
+}
+
+function start-clearml-session {
+  export CLEARML_CONFIG_FILE="${THIS_DIR}/volumes/opt/clearml/config/clearml.conf"
+  echo $CLEARML_CONFIG_FILE
+  clearml-session --yes ${@}
+}
+
+function generate-clearml-credentials-for-compose {
+    export LOCALHOST=`get-localhost`
+
     docker-compose \
       -f docker-compose.yaml \
-      -f ./py/docker-compose.yaml \
-      -f ./py/docker-compose.depends.yaml \
+      -f ./create-clearml-credentials/docker-compose.yaml \
+      -f ./create-clearml-credentials/docker-compose.depends.yaml \
       run create-clearml-credentials
 }
 

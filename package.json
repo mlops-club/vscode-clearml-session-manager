@@ -31,7 +31,7 @@
     },
     "commands": [
       {
-        "command": "clearml-session-manager.installPythonDependencies",
+        "command": "clearmlSessions.installPythonDependencies",
         "title": "ClearML: Install Python Dependencies"
       },
       {
@@ -91,7 +91,9 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
-    "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose"
+    "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose",
+    "clean": "bash run.sh clean",
+    "start-clearml-server": "bash run.sh start-clearml-server"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.3",
@@ -113,6 +115,7 @@
     "@pushcorn/hocon-parser": "^1.2.9",
     "axios": "^1.6.0",
     "fs-extra": "^11.1.1",
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver-protocol": "^3.17.5"
   }
 }

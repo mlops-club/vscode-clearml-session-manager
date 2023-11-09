@@ -7,7 +7,7 @@ services:
     environment:
       BASE_URL: "http://${LOCALHOST:-host.docker.internal}:8080"
     volumes:
-      - "./py/:/app"
+      - "./create-clearml-credentials/:/app"
       - "./volumes/opt/clearml/config/:/opt/clearml/config/"
     networks:
       - frontend
