@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  create-clearml-credentials:
+    depends_on:
+      - webserver
+      # webserver:
+      #   condition: service_healthy
+    volumes:
+      - "./py/:/app"
+      - "./volumes/opt/clearml/config/:/opt/clearml/config/"

@@ -46,6 +46,7 @@ services:
       - backend
       - frontend
 
+
   elasticsearch:
     networks:
       - backend
@@ -133,6 +134,13 @@ services:
     networks:
       - backend
       - frontend
+    # # added by eric:
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/api/v2.26/debug.ping"]
+    #   interval: 1s
+    #   timeout: 10s
+    #   retries: 5
+    #   start_period: 5s
 
   async_delete:
     depends_on:
@@ -179,8 +187,8 @@ services:
       CLEARML_WEB_HOST: ${CLEARML_WEB_HOST:-http://webserver:8080}
       CLEARML_API_HOST: http://apiserver:8008
       CLEARML_FILES_HOST: ${CLEARML_FILES_HOST:-http://fileserver:8081}
-      CLEARML_API_ACCESS_KEY: ${CLEARML_API_ACCESS_KEY:-EGRTCO8JMSIGI6S39GTP43NFWXDQOW}
-      CLEARML_API_SECRET_KEY: ${CLEARML_API_SECRET_KEY:-x!XTov_G-#vspE*Y(h$Anm&DIc5Ou-F)jsl$PdOyj5wG1&E!Z8}
+      CLEARML_API_ACCESS_KEY: ${CLEARML_API_ACCESS_KEY:-}
+      CLEARML_API_SECRET_KEY: ${CLEARML_API_SECRET_KEY:-}
       CLEARML_AGENT_GIT_USER: ${CLEARML_AGENT_GIT_USER}
       CLEARML_AGENT_GIT_PASS: ${CLEARML_AGENT_GIT_PASS}
       CLEARML_AGENT_UPDATE_VERSION: ${CLEARML_AGENT_UPDATE_VERSION:->=0.17.0}

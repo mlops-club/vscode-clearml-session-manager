@@ -90,7 +90,8 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.3",

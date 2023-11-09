@@ -1,0 +1,4 @@
+pyleniumio
+rich
+requests
+pyhocon

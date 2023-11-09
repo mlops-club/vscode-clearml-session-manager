@@ -8,4 +8,6 @@ node_modules
 volumes/opt/clearml/agent
 volumes/opt/clearml/data
 volumes/opt/clearml/logs
+volumes/opt/clearml/config/generated_credentials.env
+volumes/opt/clearml/config/clearml.conf
 volumes/usr
