@@ -93,7 +93,8 @@
     "test": "node ./out/test/runTest.js",
     "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose",
     "clean": "bash run.sh clean",
-    "start-clearml-server": "bash run.sh start-clearml-server"
+    "start-clearml-server": "bash run.sh start-clearml-server",
+    "start-clearml-session": "bash run.sh start-clearml-session --yes --queue sessions --docker python:3.9 --password test --username test"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.3",

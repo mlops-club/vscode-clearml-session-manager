@@ -71,6 +71,13 @@ in all the right places.
    npm run start-clearml-server
    ```
 6. start the VS Code extension by opening `./src/extension.ts` and pressing `F5` on your keyboard
+7. The extension should load successfully, but it won't have any sessions. To start a session, run
+   ```bash
+   npm run start-clearml-session
+   ```
+   This will take some time to run. While it loads, you should be able to visit
+   http://localhost:8080 and visit the `DevOps` folder in Clearml after logging in
+   with `username: test`, `password: test`.
 
 ### Roadmap
 
