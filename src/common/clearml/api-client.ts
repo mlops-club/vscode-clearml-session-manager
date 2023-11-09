@@ -26,8 +26,8 @@ export class ClearMLApiClient {
      * @param clearmlConfFpath - Path to the ClearML configuration file.
      * @returns A new instance of ClearML class.
      */
-    static fromConfigFile(clearmlConfFpath: string): ClearMLApiClient {
-        const config = readClearMLAuthSettingsFromConfigFile(clearmlConfFpath);
+    static async fromConfigFile(clearmlConfFpath: string): Promise<ClearMLApiClient> {
+        const config = await readClearMLAuthSettingsFromConfigFile(clearmlConfFpath);
         return new ClearMLApiClient(config);
     }
 
@@ -41,10 +41,6 @@ export class ClearMLApiClient {
      * Authenticate with the ClearML server and store the authentication token internally.
      */
     async auth(): Promise<void> {
-        if (!this.config.api_server || !this.config.access_key || !this.config.secret_key) {
-            throw new Error('Configuration is not complete.');
-        }
-
         const loginResponse: AxiosResponse<AuthResponse> = await axios.get(this.config.api_server + "/auth.login", {
             auth: {
                 username: this.config.access_key,

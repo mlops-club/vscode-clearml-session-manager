@@ -1,6 +1,8 @@
 # `vscode-clearml-session-manager`
 
-A VS Code extension for listing, creating, deleting, and connecting to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme). ClearML is self-hostable and has a free SaaS-hosted plan, meaning you can get a world-class data science development environment for _free_.
+A VS Code extension for listing, creating, deleting, and connecting to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme). 
+
+ClearML is self-hostable *without kubernetes* and has a free SaaS-hosted plan, meaning you can get a world-class data science development environment for _free_.
 
 > 💬 We're looking for contributors to prep for our first release! See the [contributing](#contributing) section below.
 
@@ -44,6 +46,52 @@ in the leftmost sidebar. And how we got our icons to show up
 in all the right places.
 4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://youtu.be/xmvlbjE0F1g)
 
+### Running the extension and ClearML completely locally
+
+> ⚠️ **Disclaimer:** expect problems if you try to run this project directly on Windows.
+> 
+> Install the Windows Subsystem for Linux 2 (WSL2) and develop from there if
+> you are running windows. 
+> 
+> The free videos in the [`Environment Setup` section of this
+> course](https://www.udemy.com/course/setting-up-the-linux-terminal-for-software-development/) walk you through how to do this, as well as most of step [1] below.
+
+1. install the prerequisites
+   1. `docker`, on MacOS and Windows (including WSL2), get [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   2. `docker-compose`, e.g. `brew install docker-compose`
+   3. NodeJS, e.g. with `brew install nodejs`
+   4. Python. `pyenv` is a good way to install Python.
+   5. VS Code
+2. clone the repo
+3. install the NodeJS dependencies
+   ```bash
+   # cd into the cloned repo and install the NodeJS dependencies
+   cd ./vscode-clearml-session-manager/
+   npm install
+   ```
+4. generate a set of ClearML API keys, these get placed at `./volumes/opt/clearml/config/clearml.conf`
+   ```bash
+   npm run create-clearml-credentials
+   ```
+5. start the ClearML server
+   ```bash
+   npm run start-clearml-server
+   ```
+6. start the VS Code extension by opening `./src/extension.ts` and pressing `F5` on your keyboard
+7. The extension should load successfully, but it won't have any sessions. To start a session, run
+   ```bash
+   # install the clearml-session CLI into a Python virtual environment
+   python -m venv ./venv/
+   source ./venv/bin/activate
+   npm run install-python-deps
+
+   # execute the clearml-session CLI to start a session
+   npm run start-clearml-session
+   ```
+   This will take some time to run. While it loads, you should be able to visit
+   http://localhost:8080 and visit the `DevOps` folder in Clearml after logging in
+   with `username: test`, `password: test`.
+
 ### Roadmap
 
 > Items marked with ✨ are high-impact, and important for our first release
@@ -85,6 +133,64 @@ in all the right places.
 - [ ] ✨ Add a CD pipeline
    - [ ] learn how to publish a VS Code extension on the marketplace
    - [ ] enable that for key maintainers to manually approve before the release goes out after each PR
+
+## Architecture of ClearML
+
+# ClearML Server with MinIO - Service Architecture
+
+```mermaid
+graph LR
+    subgraph backend_network["Backend Network"]
+        redis[("Redis<br>Port: N/A")]
+        mongo[("MongoDB<br>Port: N/A")]
+        elasticsearch[("Elasticsearch<br>Port: N/A")]
+        fileserver[("Fileserver<br>Port: 8081")]
+        minio[("MinIO<br>Port: 9000")]
+        apiserver[("API Server<br>Port: 8008")]
+        async_delete[("Async Delete<br>Port: N/A")]
+        agent_services[("Agent Services<br>Port: N/A")]
+    end
+
+    subgraph frontend_network["Frontend Network"]
+        webserver[("Webserver<br>Port: 80<br>URL: app.clearml.localhost:8080")]
+    end
+
+    user -->|HTTP:8080| webserver
+    webserver -->|HTTP:8008| apiserver
+    apiserver -->|Internal| mongo
+    apiserver -->|Internal| redis
+    apiserver -->|Internal| elasticsearch
+    apiserver -->|HTTP:8081| fileserver
+    apiserver -->|HTTP:9000| minio
+    fileserver -->|HTTP:9000| minio
+    async_delete -->|Internal| apiserver
+    agent_services -->|Internal| apiserver
+
+    style webserver fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+
+## Notes
+
+| Service | URL | Notes |
+| --- | --- | --- |
+| UI | http://app.clearml.localhost:8080 | user: `test` pass `test` |
+| API Server | http://api.clearml.localhost:8008 | |
+| Fileserver | http://files.clearml.localhost:8081 | |
+| MinIO UI | http://minio.clearml.localhost:9001 | user: `minioadmin` pass: `minioadmin` |
+
+- **API Server (`apiserver`): `api.clearml.localhost:8008`** Interacts with MongoDB, Redis, Elasticsearch, Fileserver, and MinIO. It can be accessed internally by other services within the `backend_network`. 
+- **Webserver (`webserver`): `app.clearml.localhost:8080`** The main entry point for users in the browser. It can be visited at .
+- **Fileserver (`fileserver`): `files.clearml.localhost:8081`** Serves files and communicates with MinIO on port `9000`. It's reachable internally by the API server at port `8081`. 
+- **MinIO (`minio`):** The file storage server replacing the built-in fileserver. It listens on port `9000` and can be accessed internally by both the Fileserver and the API server.
+- **Elasticsearch (`elasticsearch`), MongoDB (`mongo`), and Redis (`redis`):** These services do not have ports exposed outside but can be accessed by the API server and other services within the `backend_network`.
+- **Async Delete (`async_delete`):** It's an internal service that connects to the API server and depends on MongoDB, Redis, and Elasticsearch.
+- **Agent Services (`agent_services`):** Interacts with the API server and does not expose any ports outside.
+
+Ports mentioned as "N/A" are not directly exposed to the host machine but are used internally within the Docker network for service communication.
+
+Remember to replace the example URL with the actual domain and port you will use in your production or development environment. The above diagram assumes that services like MongoDB, Redis, and Elasticsearch do not need to be accessed directly through a browser and therefore do not have a URL associated with them for external access.
+
 
 <!-- # clearml-session-manager README
 

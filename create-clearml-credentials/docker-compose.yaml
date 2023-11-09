@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  create-clearml-credentials:
+    image: mlops-club/create-clearml-credentials
+    command: python /app/create_keypair.py
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    environment:
+      DISPLAY: ":0"
+      MOZ_HEADLESS: 1
+      BASE_URL: "http://host.docker.internal:8080"
+      CREDENTIALS_DOTENV_OUTFPATH: "/opt/clearml/config/generated_credentials.env"
+      CLEARML_CONF_FPATH_TO_UPDATE: "/opt/clearml/config/clearml.conf"
+    volumes:
+      - ".:/app"
+      - "../volumes/opt/clearml/config/:/opt/clearml/config/"
