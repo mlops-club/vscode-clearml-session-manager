@@ -10,6 +10,17 @@ function install {
 }
 
 function generate-clearml-credentials-for-compose {
+    # Detect the OS
+    OS=$(uname -s)
+
+    if [ "$OS" = "Darwin" ]; then
+      # if macOS, use host.docker.internal
+      export LOCALHOST=host.docker.internal
+    else
+      # otherwise use localhost
+      export LOCALHOST=localhost
+    fi
+
     docker-compose \
       -f docker-compose.yaml \
       -f ./py/docker-compose.yaml \
@@ -35,6 +46,12 @@ function clean {
         tests/artifacts \
         cookiecutter.yaml \
         sample \
+        volumes/opt/clearml/agent \
+        volumes/opt/clearml/config/generated_credentials.env \
+        volumes/opt/clearml/config/clearml.conf \
+        volumes/opt/clearml/data \
+        volumes/opt/clearml/logs \
+        volumes/usr/ \
         .coverage
     find . \
       -type d \

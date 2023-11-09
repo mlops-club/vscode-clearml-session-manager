@@ -236,3 +236,5 @@ networks:
     driver: bridge
   frontend:
     driver: bridge
+  default:
+    name: frontend
