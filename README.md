@@ -39,7 +39,70 @@ in the leftmost sidebar. And how we got our icons to show up
 in all the right places.
 4. ~5 min - [How we got VS Code to open a new window SSH'ed into an already-attached-to ClearML session](https://share.descript.com/view/dRoWrZI5NB3)
 
+### Running the extension and ClearML remotely
+
+> 📌 **Note:** As a first contribution, it'd be great if you submitted a PR to this README if you get stuck during setup.
+
+#### Step 1 - set up your own machine, i.e. your laptop
+
+1. Sign up for the free, SaaS-hosted ClearML at app.clearml.ml
+2. Follow the instructions in their UI to make a set of API keys and put them into a local `~/clearml.conf` file by running the `clearml-init` command and pasting them in. 
+   1. In case you mess up when doing the initialization, you can go to `Settings` > `Workspace` > `+ Create new credentials` in the UI to create a key pair. But it should automataically do this for you when you first log in. ![](./docs/create-credentials-clearml-ui.png)
+   2. ![](./docs/created-credentials-ui.png)
+
+#### Step 2 - set up a remote machine, e.g. a VM in the cloud
+
+If you choose an EC2 instance or Amazon Lightsail (cheaper than EC2), you can
+do something like this to install and start up the `clearml-agent daemon` which
+will allow you to run ClearML Session on it:
+
+First, connect to it via SSH
+
+```bash
+ssh ec2-user@<public ip of instance>
+```
+
+Then install and start the `clearml-agent daemon`
+
+```bash
+sudo su
+yum update -y && yum install -y docker docker-compose python3-pip
+service docker start
+
+python -m pip install clearml clearml-agent
+clearml-agent init  # paste in your API keys (you can also make a new pair for this)
+
+# exapmle daemon command, you can set these however you like
+clearml-agent daemon --queue default --docker --cpu-only --log-level debug
+```
+
+#### Step 3 - start a ClearML Session on your instance
+
+On your laptop, you'd run something like
+
+```bash
+clearml-session --queue default --docker python:3.9
+```
+
+Note that this will open an SSH tunnel to your instance, so your instance needs
+to accept incoming traffic on port `22` and probably others like `10022`.
+
+If this is an EC2 instance, this means adjusting your security group. Other clouds
+have a similar concept. They often call this a "firewall".
+
+#### Step 4 - run the extension locally
+
+Follow steps 1, 2, 3, and 6 below.
+
 ### Running the extension and ClearML completely locally
+
+> ⚠️ **Disclaimer:** while getting this running locally is a good onboarding exercise, 
+> the last step currently fails (For Eric, at least) mid-way through creating the session.
+> If you want to pursue troubleshooting this, by all means!
+>
+> Unfortunately, for the sake of continuing development, the most reliable course
+> is to provision your own VM in the cloud e.g. an EC2 instance, Digital Ocean droplet,
+> Linode server, etc.
 
 > ⚠️ **Disclaimer:** expect problems if you try to run this project directly on Windows.
 > 

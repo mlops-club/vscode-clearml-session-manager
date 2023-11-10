@@ -5,7 +5,7 @@ import * as os from 'os';
 
 
 
-const getPathToClearmlConfigFile = (): string => {
+export const getPathToClearmlConfigFile = (): string => {
     const homeDir = os.homedir();
     // return `${homeDir}/clearml.conf`;
 
