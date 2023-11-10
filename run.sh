@@ -29,10 +29,14 @@ function get-localhost {
 
 }
 
+function start-clearml-agent {
+  export CLEARML_CONFIG_FILE="${THIS_DIR}/volumes/opt/clearml/config/clearml.conf"
+  clearml-agent daemon --queue default --cpu-only --docker
+}
+
 function start-clearml-session {
   export CLEARML_CONFIG_FILE="${THIS_DIR}/volumes/opt/clearml/config/clearml.conf"
-  echo $CLEARML_CONFIG_FILE
-  clearml-session --yes ${@}
+  clearml-session --public-ip false ${@}
 }
 
 function generate-clearml-credentials-for-compose {

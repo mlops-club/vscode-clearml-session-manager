@@ -10,6 +10,8 @@ import { initializePython } from './common/python';
 import { ensureClearMlSessionCliIsAvailable } from './common/clearml/install-cli';
 import { ClearMlSessionsTreeDataProvider, ClearmlSession } from './common/ui/clearml-tree-view';
 import { connectToRemoteSSH } from './common/remote-ssh-connect';
+import { functionReadClearmlConfigFile } from './common/clearml/clearml-conf';
+import { getPathToClearmlConfigFile } from './common/clearml/fetch-interactive-sessions';
 
 
 // This method is called when your extension is activated
@@ -25,13 +27,15 @@ export async function activate(context: vscode.ExtensionContext) {
 			
 	const clearmlSessionsTreeProvider = new ClearMlSessionsTreeDataProvider();
 	vscode.window.registerTreeDataProvider('clearmlSessions', clearmlSessionsTreeProvider);
-	vscode.commands.registerCommand('clearmlSessions.refreshEntry', () =>
+	vscode.commands.registerCommand('clearmlSessions.refreshEntry', async () => {
+		await loadPythonExtension(context);
 		clearmlSessionsTreeProvider.refresh()
-	);
+	});
 
-	vscode.commands.registerCommand('clearmlSessions.openInBrowser', (session: ClearmlSession) => {
-		console.log('openInBrowser, session: ', session);
-		const clearmlTaskUrlinUi = `https://app.clear.ml/projects/${session.sessionTask.project.id}/experiments/${session.sessionTask.id}/execution?columns=selected&columns=type&columns=name&columns=tags&columns=status&columns=project.name&columns=users&columns=started&columns=last_update&columns=last_iteration&columns=parent.name&order=-last_update&filter=`
+	vscode.commands.registerCommand('clearmlSessions.openInBrowser', async (session: ClearmlSession) => {
+		const clearmlConfFpath: string = getPathToClearmlConfigFile()
+		const clearmlConfig = await functionReadClearmlConfigFile(clearmlConfFpath)
+		const clearmlTaskUrlinUi = `${clearmlConfig.api.web_server}/projects/${session.sessionTask.project.id}/experiments/${session.sessionTask.id}/execution?columns=selected&columns=type&columns=name&columns=tags&columns=status&columns=project.name&columns=users&columns=started&columns=last_update&columns=last_iteration&columns=parent.name&order=-last_update&filter=`
 		vscode.env.openExternal(vscode.Uri.parse(clearmlTaskUrlinUi));
 	})
 
@@ -63,6 +67,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	
 	await loadPythonExtension(context);
 	await clearmlSessionsTreeProvider.refresh()
+	vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] extension loaded!`);
 
 	console.log('Congratulations, your extension "clearml-session-manager" is now active!');
 }
