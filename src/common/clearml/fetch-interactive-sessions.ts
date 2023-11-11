@@ -1,27 +1,23 @@
-import path from "path";
 import { ClearMLApiClient } from "./api-client";
 import { Task } from "./models/tasks";
-import * as os from 'os';
+import { ClearmlExtensionSettings, getExtensionSettings } from "../settings";
 
 
 
-export const getPathToClearmlConfigFile = (): string => {
-    const homeDir = os.homedir();
-    // return `${homeDir}/clearml.conf`;
-
-    // path to the dev clearml.conf
-    return path.join(__dirname, "..", "volumes", "opt", "clearml", "config", "clearml.conf")
+export const getPathToClearmlConfigFile = async (): Promise<string> => {
+    const settings: ClearmlExtensionSettings = await getExtensionSettings()
+    return settings.clearmlConfigFilePath;
 }
 
-export const fetchInteractiveSessions = async (): Promise<Task[]> => {
-    const clearmlConfigFpath: string = getPathToClearmlConfigFile();
+export const fetchClearmlSessions = async (): Promise<Task[]> => {
+    const clearmlConfigFpath: string = await getPathToClearmlConfigFile();
     const clearmlClient = await ClearMLApiClient.fromConfigFile(clearmlConfigFpath);
     await clearmlClient.auth();
-    const interactiveSessions = await listInteractiveSessions(clearmlClient);
+    const interactiveSessions = await listClearmlSessions(clearmlClient);
     return interactiveSessions;
 }
 
-const listInteractiveSessions = async (clearmlClient: ClearMLApiClient): Promise<Task[]> => {
+const listClearmlSessions = async (clearmlClient: ClearMLApiClient): Promise<Task[]> => {
     const devopsProjectId = await clearmlClient.getProjectIdByName("DevOps")
     const interactiveSessions = await clearmlClient.getTasks({projectIds: [devopsProjectId], name: "Interactive Session"});
     return interactiveSessions;

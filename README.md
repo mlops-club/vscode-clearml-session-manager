@@ -159,6 +159,8 @@ Follow steps 1, 2, 3, and 6 below.
 
 > Items marked with ✨ are high-impact, and important for our first release
 
+Features:
+
 - [ ] Query the ClearML API to display the most useful data about each session
    - [ ] Total CPU cores
    - [ ] Public IP address of the worker
@@ -168,8 +170,8 @@ Follow steps 1, 2, 3, and 6 below.
    - [ ] Username/email of creator
    - [ ] Human-readable format of how long it's been alive, e.g. 1d 2h 5m
 - [ ] Add support for `settings.json` settings including
-   - [ ] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
-      - [ ] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
+   - [x] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
+      - [x] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
    - [ ] `clearml.sessionPresets` (array of objects), lets you your favorite sets of arguments to the `clearml-session` CLI
 - [ ] Add a `+` button that allows you to create a ClearML session
    - [ ] Implement a way for users to define and select presets for `clearml-sessions`. Ideas:

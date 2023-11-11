@@ -3,8 +3,8 @@
 
 import * as path from 'path';
 
-export const SETTINGS_NAMESPACE = ""
 export const EXTENSION_ID = 'clearml-session-manager';
+export const SETTINGS_NAMESPACE = EXTENSION_ID
 export const EXTENSION_NAME = "ClearML Session Manager"
 const folderName = path.basename(__dirname);
 export const EXTENSION_ROOT_DIR =

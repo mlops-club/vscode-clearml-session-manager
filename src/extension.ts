@@ -14,9 +14,6 @@ import { functionReadClearmlConfigFile } from './common/clearml/clearml-conf';
 import { getPathToClearmlConfigFile } from './common/clearml/fetch-interactive-sessions';
 
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-
 export async function activate(context: vscode.ExtensionContext) {
 
 	/**
@@ -42,8 +39,13 @@ export async function activate(context: vscode.ExtensionContext) {
 	 * The user of the extension can define settings in their .vscode/settings.json or global settings.
 	 */
 	await loadPythonExtension(context);
-	const clearmlExtensionSettings: ClearmlExtensionSettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
+	const clearmlExtensionSettings: ClearmlExtensionSettings = await getExtensionSettings();
 	console.log(clearmlExtensionSettings)
+
+	// print settings whenever they change
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
+        console.log("New Settings:", await getExtensionSettings())
+    }));
 	
 	/**
 	 * Register the ClearML Session tree view.

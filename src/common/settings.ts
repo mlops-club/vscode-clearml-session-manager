@@ -13,8 +13,8 @@
 import { ConfigurationChangeEvent, ConfigurationScope, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { getInterpreterDetails } from './python';
 import { getConfiguration, getWorkspaceFolders } from './vscodeapi';
-import { traceInfo, traceLog, traceWarn } from './logging';
-import { EXTENSION_ID } from './constants';
+import { traceLog } from './logging';
+import { SETTINGS_NAMESPACE } from './constants';
 
 export interface ClearmlExtensionSettings {
     clearmlConfigFilePath: string;
@@ -33,8 +33,8 @@ export interface ClearmlExtensionSettings {
  *                                        the function uses the first available workspace.
  * @returns {Promise<ClearmlExtensionSettings>} - A promise that resolves to the deeply merged settings object.
  */
-export async function getExtensionSettings(namespace: string, workspace?: WorkspaceFolder): Promise<ClearmlExtensionSettings> {
-    const globalSettings: ClearmlExtensionSettings = await getGlobalSettings(namespace);
+export async function getExtensionSettings(workspace?: WorkspaceFolder): Promise<ClearmlExtensionSettings> {
+    const globalSettings: ClearmlExtensionSettings = await getGlobalSettings(SETTINGS_NAMESPACE);
     
     // Use the first available workspace if none is provided
     if (!workspace) {
@@ -43,7 +43,8 @@ export async function getExtensionSettings(namespace: string, workspace?: Worksp
     }
 
     if (workspace) {
-        const workspaceSettings: ClearmlExtensionSettings = await getWorkspaceSettings(namespace, workspace);
+        const workspaceSettings: ClearmlExtensionSettings = await getWorkspaceSettings(SETTINGS_NAMESPACE, workspace);
+        console.log("workspace settings", workspaceSettings)
         return deepMergeSettings(globalSettings, workspaceSettings);
     } else {
         return globalSettings;
@@ -56,6 +57,14 @@ export function getInterpreterFromSetting(namespace: string, scope?: Configurati
     return config.get<string[]>('interpreter');
 }
 
+/**
+ * Workspace settings refer to settings specified in a .vscode/settings.json or .code-workspace file.
+ * 
+ * @param namespace 
+ * @param workspace 
+ * @param includeInterpreter 
+ * @returns 
+ */
 export async function getWorkspaceSettings(
     namespace: string,
     workspace: WorkspaceFolder,
@@ -104,6 +113,12 @@ function getGlobalValue<T>(config: WorkspaceConfiguration, key: string): T | und
     return inspect?.globalValue ?? inspect?.defaultValue;
 }
 
+/**
+ * Global settings refer to User settings, not in ./vscode/settings.json
+ * 
+ * @param namespace 
+ * @returns 
+ */
 export async function getGlobalSettings(namespace: string): Promise<ClearmlExtensionSettings> {
     const config = getConfiguration(namespace);
 
@@ -119,7 +134,7 @@ export async function getGlobalSettings(namespace: string): Promise<ClearmlExten
     return settings;
 }
 
-export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string = EXTENSION_ID): boolean {
+export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string = SETTINGS_NAMESPACE): boolean {
     const thisExtensionSettings = [
         `${namespace}.clearmlConfigFilePath`,
     ];

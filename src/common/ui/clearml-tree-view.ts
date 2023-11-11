@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Task } from '../clearml/models/tasks';
-import { fetchInteractiveSessions } from '../clearml/fetch-interactive-sessions';
+import { fetchClearmlSessions } from '../clearml/fetch-interactive-sessions';
 
 export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<ClearmlSession | vscode.TreeItem> {
   constructor(public interactiveSessions: Task[] = []) { }
@@ -9,7 +9,7 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
   readonly onDidChangeTreeData: vscode.Event<ClearmlSession | undefined | null | void> = this._onDidChangeTreeData.event;
 
   async refresh(): Promise<void> {
-    this.interactiveSessions = await fetchInteractiveSessions();
+    this.interactiveSessions = await fetchClearmlSessions();
     this._onDidChangeTreeData.fire();
   }
 
