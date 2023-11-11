@@ -30,12 +30,12 @@ function get-localhost {
 }
 
 function start-clearml-agent {
-  export CLEARML_CONFIG_FILE="${THIS_DIR}/volumes/opt/clearml/config/clearml.conf"
+  export CLEARML_CONFIG_FILE="${THIS_DIR}/dev-utils/volumes/opt/clearml/config/clearml.conf"
   clearml-agent daemon --queue default --cpu-only --docker
 }
 
 function start-clearml-session {
-  export CLEARML_CONFIG_FILE="${THIS_DIR}/volumes/opt/clearml/config/clearml.conf"
+  export CLEARML_CONFIG_FILE="${THIS_DIR}/dev-utils/volumes/opt/clearml/config/clearml.conf"
   clearml-session --public-ip false ${@}
 }
 
@@ -47,7 +47,7 @@ function start-clearml-session {
 # credentials involves visiting the UI and creating them for a user.
 #
 # Once created in the UI, information about the credentials is stored as state
-# in the ./volumes/opt/data folder. To avoid committing these large data files
+# in the ./dev-utils/volumes/opt/data folder. To avoid committing these large data files
 # directly to git, we use a docker-compose file that runs an additional selenium/pylenium
 # container to visit the UI and create the credentials.
 #
@@ -61,8 +61,8 @@ function generate-clearml-credentials-for-compose {
 
     docker-compose \
       -f docker-compose.yaml \
-      -f ./create-clearml-credentials/docker-compose.yaml \
-      -f ./create-clearml-credentials/docker-compose.depends.yaml \
+      -f ./dev-utils/create-clearml-credentials/docker-compose.yaml \
+      -f ./dev-utils/create-clearml-credentials/docker-compose.depends.yaml \
       run create-clearml-credentials
 }
 
@@ -82,14 +82,12 @@ function clean {
         coverage.xml \
         test-reports \
         tests/artifacts \
-        cookiecutter.yaml \
-        sample \
-        volumes/opt/clearml/agent \
-        volumes/opt/clearml/config/generated_credentials.env \
-        volumes/opt/clearml/config/clearml.conf \
-        volumes/opt/clearml/data \
-        volumes/opt/clearml/logs \
-        volumes/usr/ \
+        dev-utils/volumes/opt/clearml/agent \
+        dev-utils/volumes/opt/clearml/config/generated_credentials.env \
+        dev-utils/volumes/opt/clearml/config/clearml.conf \
+        dev-utils/volumes/opt/clearml/data \
+        dev-utils/volumes/opt/clearml/logs \
+        dev-utils/volumes/usr/ \
         .coverage
     find . \
       -type d \

@@ -16,7 +16,7 @@ with credentials. It turns out, the most straightforward way to create these
 credentials involves visiting the UI and creating them for a user.
 
 Once created in the UI, information about the credentials is stored as state
-in the ./volumes/opt/data folder. To avoid committing these large data files
+in the ./dev-utils/volumes/opt/data folder. To avoid committing these large data files
 directly to git, we use a docker-compose file that runs an additional selenium/pylenium
 container to visit the UI and create the credentials.
 

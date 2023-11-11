@@ -27,7 +27,7 @@
         {
           "id": "clearml-explorer-view-container",
           "title": "ClearML Sessions",
-          "icon": "resources/clearml-logo.svg"
+          "icon": "src/resources/clearml-logo.svg"
         }
       ]
     },

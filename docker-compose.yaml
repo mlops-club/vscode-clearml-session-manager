@@ -10,9 +10,9 @@ services:
     image: allegroai/clearml:latest
     restart: unless-stopped
     volumes:
-      - ./volumes/opt/clearml/logs:/var/log/clearml
-      - ./volumes/opt/clearml/config:/opt/clearml/config
-      - ./volumes/opt/clearml/data/fileserver:/mnt/fileserver
+      - ./dev-utils/volumes/opt/clearml/logs:/var/log/clearml
+      - ./dev-utils/volumes/opt/clearml/config:/opt/clearml/config
+      - ./dev-utils/volumes/opt/clearml/data/fileserver:/mnt/fileserver
     depends_on:
       - redis
       - mongo
@@ -77,8 +77,8 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
     restart: unless-stopped
     volumes:
-      - ./volumes/opt/clearml/data/elastic_7:/usr/share/elasticsearch/data
-      - ./volumes/usr/share/elasticsearch/logs:/usr/share/elasticsearch/logs
+      - ./dev-utils/volumes/opt/clearml/data/elastic_7:/usr/share/elasticsearch/data
+      - ./dev-utils/volumes/usr/share/elasticsearch/logs:/usr/share/elasticsearch/logs
 
   fileserver:
     networks:
@@ -92,9 +92,9 @@ services:
       CLEARML__fileserver__delete__allow_batch: "true"
     restart: unless-stopped
     volumes:
-      - ./volumes/opt/clearml/logs:/var/log/clearml
-      - ./volumes/opt/clearml/data/fileserver:/mnt/fileserver
-      - ./volumes/opt/clearml/config:/opt/clearml/config
+      - ./dev-utils/volumes/opt/clearml/logs:/var/log/clearml
+      - ./dev-utils/volumes/opt/clearml/data/fileserver:/mnt/fileserver
+      - ./dev-utils/volumes/opt/clearml/config:/opt/clearml/config
     ports:
       - "8081:8081"
 
@@ -106,8 +106,8 @@ services:
     restart: unless-stopped
     command: --setParameter internalQueryMaxBlockingSortMemoryUsageBytes=196100200
     volumes:
-      - ./volumes/opt/clearml/data/mongo_4/db:/data/db
-      - ./volumes/opt/clearml/data/mongo_4/configdb:/data/configdb
+      - ./dev-utils/volumes/opt/clearml/data/mongo_4/db:/data/db
+      - ./dev-utils/volumes/opt/clearml/data/mongo_4/configdb:/data/configdb
 
   redis:
     networks:
@@ -116,7 +116,7 @@ services:
     image: redis:5.0
     restart: unless-stopped
     volumes:
-      - ./volumes/opt/clearml/data/redis:/data
+      - ./dev-utils/volumes/opt/clearml/data/redis:/data
 
   webserver:
     command:
@@ -170,7 +170,7 @@ services:
       - --fileserver-host
       - http://fileserver:8081
     volumes:
-      - ./volumes/opt/clearml/logs:/var/log/clearml
+      - ./dev-utils/volumes/opt/clearml/logs:/var/log/clearml
 
   agent-services-queue: &agent_defaults
     networks:
@@ -203,7 +203,7 @@ services:
       SHUTDOWN_IF_NO_ACCESS_KEY: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/opt/clearml/agent:/root/.clearml
+      - ./dev-utils/volumes/opt/clearml/agent:/root/.clearml
     depends_on:
       - apiserver
     entrypoint: >
@@ -223,7 +223,7 @@ services:
     image: minio/minio
     container_name: clearml-minio
     volumes:
-      - ./volumes/opt/clearml/data/minio:/data
+      - ./dev-utils/volumes/opt/clearml/data/minio:/data
     environment:
       MINIO_ACCESS_KEY: "minioadmin"  # Replace with your actual access key
       MINIO_SECRET_KEY: "minioadmin"  # Replace with your actual secret key

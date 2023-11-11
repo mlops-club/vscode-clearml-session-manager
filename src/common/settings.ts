@@ -60,6 +60,9 @@ export function getInterpreterFromSetting(namespace: string, scope?: Configurati
 /**
  * Workspace settings refer to settings specified in a .vscode/settings.json or .code-workspace file.
  * 
+ * Note: Passing an empty string as the namespace allows you to get ALL workspace settings for the workspace,
+ * including those from other extensions and vanilla VS Code.
+ * 
  * @param namespace 
  * @param workspace 
  * @param includeInterpreter 
@@ -115,6 +118,9 @@ function getGlobalValue<T>(config: WorkspaceConfiguration, key: string): T | und
 
 /**
  * Global settings refer to User settings, not in ./vscode/settings.json
+ * 
+ * Note: Passing an empty string as the namespace allows you to get ALL workspace settings for the workspace,
+ * including those from other extensions and vanilla VS Code.
  * 
  * @param namespace 
  * @returns 

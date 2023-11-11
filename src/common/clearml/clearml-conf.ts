@@ -1,7 +1,5 @@
-import fs from 'fs';
-// import { parseHocon } from 'hocon-parser';
 import { getPathToActivePythonInterpreter } from '../python';
-import { parseHoconFileWithPyhocon } from './hocon';
+import { parseHoconFileWithPyhocon } from './hocon-parser';
 import { ClearMLConfig } from './models/clearml-config';
 
 export interface ClearMLAuthConfig {
@@ -13,12 +11,12 @@ export interface ClearMLAuthConfig {
 export const functionReadClearmlConfigFile = async (clearmlConfFpath: string): Promise<ClearMLConfig> => {
     const pythonInterpreterFpath: string = (await getPathToActivePythonInterpreter() as string)
     const clearmlConfig = await parseHoconFileWithPyhocon(pythonInterpreterFpath, clearmlConfFpath);
-    console.log(clearmlConfig)
     return clearmlConfig;
 }
 
 /**
  * Read the content of a file, parse it as HOCON, and extract the specified values.
+ * 
  * @param filePath - The path to the HOCON file.
  * @returns An object containing the extracted values.
  */
@@ -30,4 +28,3 @@ export async function readClearMLAuthSettingsFromConfigFile(clearmlConfFpath: st
         secret_key: clearmlConfig.api.credentials.secret_key
     }
 }
-

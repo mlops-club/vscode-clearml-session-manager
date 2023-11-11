@@ -1,21 +1,23 @@
 /**
  * Utility for parsing HOCON files.
  * 
- * It turns out that all the HOCON parsing libraries in JavaScript
- * world do not support the flavor of HOCON used by ClearML's config
- * files.
+ * It turns out that none of the HOCON parsing libraries in the JavaScript
+ * world support the flavor of HOCON used by ClearML's config files.
  * 
  * In particular, they want all strings to have quotes around them.
  * The HOCON files used by ClearML do not have quotes around strings,
- * which breaks all of the parsers.
+ * which breaks the various JavaScript HOCON parsers.
  * 
  * The ClearML SDK actually uses a Python library called pyhocon to
- * do this parsing. Given that this extension already makes the assumption
- * that the Python extension is installed, a virtualenv is activated,
- * and clearml is installed in the virtualenv, we can safely assume
- * that pyhocon is available in the virtualenv, and therefore, we can
- * simply call pyhocon as a subprocess to parse the user's clearml.conf
- * file.
+ * do this parsing. Given that this extension already assumes that:
+ * 
+ * - the Python extension is installed, 
+ * - a virtualenv is activated,
+ * - and clearml is installed in the virtualenv, 
+ * 
+ * we can safely assume that pyhocon is available in the virtualenv, and 
+ * therefore, we can simply call pyhocon as a subprocess to parse the 
+ * user's clearml.conf file.
  */
 
 import { traceError, traceInfo } from '../logging';

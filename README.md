@@ -54,8 +54,8 @@ in all the right places.
 
 1. Sign up for the free, SaaS-hosted ClearML at app.clearml.ml
 2. Follow the instructions in their UI to make a set of API keys and put them into a local `~/clearml.conf` file by running the `clearml-init` command and pasting them in. 
-   1. In case you mess up when doing the initialization, you can go to `Settings` > `Workspace` > `+ Create new credentials` in the UI to create a key pair. But it should automataically do this for you when you first log in. ![](./docs/create-credentials-clearml-ui.png)
-   2. ![](./docs/created-credentials-ui.png)
+   1. In case you mess up when doing the initialization, you can go to `Settings` > `Workspace` > `+ Create new credentials` in the UI to create a key pair. But it should automataically do this for you when you first log in. ![](./dev-utils/docs/create-credentials-clearml-ui.png)
+   2. ![](./dev-utils/docs/created-credentials-ui.png)
 
 #### Step 2 - set up a remote machine, e.g. a VM in the cloud
 
@@ -132,7 +132,7 @@ Follow steps 1, 2, 3, and 6 below.
    cd ./vscode-clearml-session-manager/
    npm install
    ```
-4. generate a set of ClearML API keys, these get placed at `./volumes/opt/clearml/config/clearml.conf`
+4. generate a set of ClearML API keys, these get placed at `./dev-utils/volumes/opt/clearml/config/clearml.conf`
    ```bash
    npm run create-clearml-credentials
    ```
@@ -324,7 +324,7 @@ You can author your README using Visual Studio Code. Here are some useful editor
 
 ## For more information
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/dev-utils/docs/languages/markdown)
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!** -->

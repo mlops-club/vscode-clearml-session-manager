@@ -15,4 +15,4 @@ services:
       CLEARML_CONF_FPATH_TO_UPDATE: "/opt/clearml/config/clearml.conf"
     volumes:
       - ".:/app"
-      - "../volumes/opt/clearml/config/:/opt/clearml/config/"
+      - "../dev-utils/volumes/opt/clearml/config/:/opt/clearml/config/"
