@@ -1,3 +1,6 @@
+// eric: most of these function appear to be thin wrappers
+// around vscode.* functions. I'm not sure why they are needed.
+
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {

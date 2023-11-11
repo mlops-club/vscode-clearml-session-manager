@@ -10,7 +10,9 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				// automatically open the dev VS Code in the clearml-playground-workspace folder
+				"${workspaceFolder}/clearml-playground-workspace"
 			],
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"

@@ -1,7 +1,3 @@
-/**
- * This file 
- */
-
 import { LanguageStatusItem, Disposable, l10n, LanguageStatusSeverity } from 'vscode';
 import { createLanguageStatusItem, getDocumentSelector } from './vscodeapi';
 import { Command } from 'vscode-languageclient';
