@@ -1,4 +1,14 @@
-// eric: this file is for reading VS Code extension settings, whether they come from settings.json, etc.
+/**
+ * Define the settings for this extension and how they are read.
+ * 
+ * Settings might come from
+ * - the user's **global settings**, e.g. from `~/Library/Application Support/Code/User/settings.json`
+ * - the **workspace settings**, e.g. from a `.code-workspace` file, 
+ * - workspace folder settings, e.g. from `.vscode/settings.json`
+ * 
+ * The settings used by this extension are defined in the `package.json` file under the
+ * `contributes.configuration` section.
+ */
 
 import { ConfigurationChangeEvent, ConfigurationScope, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { getInterpreterDetails } from './python';
@@ -6,41 +16,40 @@ import { getConfiguration, getWorkspaceFolders } from './vscodeapi';
 import { traceInfo, traceLog, traceWarn } from './logging';
 import { EXTENSION_ID } from './constants';
 
-export interface ISettings {
-    cwd: string;
-    workspace: string;
-    args: string[];
-    path: string[];
+export interface ClearmlExtensionSettings {
+    clearmlConfigFilePath: string;
     interpreter: string[];
-    importStrategy: string;
-    showNotifications: string;
 }
 
-export function getExtensionSettings(namespace: string, includeInterpreter?: boolean): Promise<ISettings[]> {
-    return Promise.all(getWorkspaceFolders().map((w) => getWorkspaceSettings(namespace, w, includeInterpreter)));
-}
-
-function resolveVariables(value: string[], workspace?: WorkspaceFolder): string[] {
-    const substitutions = new Map<string, string>();
-    const home = process.env.HOME || process.env.USERPROFILE;
-    if (home) {
-        substitutions.set('${userHome}', home);
+/**
+ * Retrieves the extension settings, merging global settings with workspace-specific overrides.
+ * 
+ * This function fetches the global settings for the extension and then, if a workspace is provided,
+ * fetches the workspace-specific settings. It performs a deep merge of these settings, ensuring that
+ * workspace settings override global settings at every level.
+ * 
+ * @param {string} namespace - The namespace of the extension.
+ * @param {WorkspaceFolder} [workspace] - An optional workspace to fetch settings for. If not provided,
+ *                                        the function uses the first available workspace.
+ * @returns {Promise<ClearmlExtensionSettings>} - A promise that resolves to the deeply merged settings object.
+ */
+export async function getExtensionSettings(namespace: string, workspace?: WorkspaceFolder): Promise<ClearmlExtensionSettings> {
+    const globalSettings: ClearmlExtensionSettings = await getGlobalSettings(namespace);
+    
+    // Use the first available workspace if none is provided
+    if (!workspace) {
+        const workspaces = getWorkspaceFolders();
+        workspace = workspaces.length > 0 ? workspaces[0] : undefined;
     }
+
     if (workspace) {
-        substitutions.set('${workspaceFolder}', workspace.uri.fsPath);
+        const workspaceSettings: ClearmlExtensionSettings = await getWorkspaceSettings(namespace, workspace);
+        return deepMergeSettings(globalSettings, workspaceSettings);
+    } else {
+        return globalSettings;
     }
-    substitutions.set('${cwd}', process.cwd());
-    getWorkspaceFolders().forEach((w) => {
-        substitutions.set('${workspaceFolder:' + w.name + '}', w.uri.fsPath);
-    });
-
-    return value.map((s) => {
-        for (const [key, value] of substitutions) {
-            s = s.replace(key, value);
-        }
-        return s;
-    });
 }
+
 
 export function getInterpreterFromSetting(namespace: string, scope?: ConfigurationScope) {
     const config = getConfiguration(namespace, scope);
@@ -51,7 +60,7 @@ export async function getWorkspaceSettings(
     namespace: string,
     workspace: WorkspaceFolder,
     includeInterpreter?: boolean,
-): Promise<ISettings> {
+): Promise<ClearmlExtensionSettings> {
     const config: WorkspaceConfiguration = getConfiguration(namespace, workspace.uri);
 
     let interpreter: string[] = [];
@@ -76,14 +85,16 @@ export async function getWorkspaceSettings(
         }
     }
 
-    const workspaceSettings = {
-        cwd: workspace.uri.fsPath,
-        workspace: workspace.uri.toString(),
-        args: resolveVariables(config.get<string[]>('args', []), workspace),
-        path: resolveVariables(config.get<string[]>('path', []), workspace),
-        interpreter: resolveVariables(interpreter, workspace),
-        importStrategy: config.get<string>('importStrategy', 'fromEnvironment'),
-        showNotifications: config.get<string>('showNotifications', 'off'),
+    const clearmlConfigFilePath: string = resolveSetting(
+        config.get<string>(
+            'clearmlConfigFilePath',
+            getDefaultClearmlConfigFilePath()
+        ),
+        workspace,
+    );
+    const workspaceSettings: ClearmlExtensionSettings = {
+        clearmlConfigFilePath: clearmlConfigFilePath,
+        interpreter: resolveSettings(interpreter, workspace),
     };
     return workspaceSettings;
 }
@@ -93,79 +104,122 @@ function getGlobalValue<T>(config: WorkspaceConfiguration, key: string): T | und
     return inspect?.globalValue ?? inspect?.defaultValue;
 }
 
-export async function getGlobalSettings(namespace: string, includeInterpreter?: boolean): Promise<ISettings> {
+export async function getGlobalSettings(namespace: string): Promise<ClearmlExtensionSettings> {
     const config = getConfiguration(namespace);
 
-    let interpreter: string[] = [];
-    if (includeInterpreter) {
-        interpreter = getGlobalValue<string[]>(config, 'interpreter') ?? [];
-        if (interpreter === undefined || interpreter.length === 0) {
-            interpreter = (await getInterpreterDetails()).path ?? [];
-        }
+    let interpreter = getGlobalValue<string[]>(config, 'interpreter') ?? [];
+    if (interpreter === undefined || interpreter.length === 0) {
+        interpreter = (await getInterpreterDetails()).path ?? [];
     }
 
-    const setting = {
-        cwd: process.cwd(),
-        workspace: process.cwd(),
-        args: getGlobalValue<string[]>(config, 'args') ?? [],
-        path: getGlobalValue<string[]>(config, 'path') ?? [],
+    const settings: ClearmlExtensionSettings = {
+        clearmlConfigFilePath: getGlobalValue<string>(config, "clearmlConfigFilePath") ?? getDefaultClearmlConfigFilePath(),
         interpreter: interpreter ?? [],
-        importStrategy: getGlobalValue<string>(config, 'importStrategy') ?? 'fromEnvironment',
-        showNotifications: getGlobalValue<string>(config, 'showNotifications') ?? 'off',
     };
-    return setting;
+    return settings;
 }
 
-export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string): boolean {
-    const settings = [
-        `${namespace}.args`,
-        `${namespace}.path`,
-        `${namespace}.interpreter`,
-        `${namespace}.importStrategy`,
-        `${namespace}.showNotifications`,
+export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string = EXTENSION_ID): boolean {
+    const thisExtensionSettings = [
+        `${namespace}.clearmlConfigFilePath`,
     ];
-    const changed = settings.map((s) => e.affectsConfiguration(s));
+    const changed = thisExtensionSettings.map((s) => e.affectsConfiguration(s));
     return changed.includes(true);
 }
 
-export function logDefaultFormatter(): void {
-    getWorkspaceFolders().forEach((workspace) => {
-        let config = getConfiguration('editor', { uri: workspace.uri, languageId: 'python' });
-        if (!config) {
-            config = getConfiguration('editor', workspace.uri);
-            if (!config) {
-                traceInfo('Unable to get editor configuration');
-            }
-        }
-        const formatter = config.get<string>('defaultFormatter', '');
-        traceInfo(`Default formatter is set to ${formatter} for workspace ${workspace.uri.fsPath}`);
-        if (formatter !== EXTENSION_ID) {
-            traceWarn(`Black Formatter is NOT set as the default formatter for workspace ${workspace.uri.fsPath}`);
-            traceWarn('To set Black Formatter as the default formatter, add the following to your settings.json file:');
-            traceWarn(`\n"[python]": {\n    "editor.defaultFormatter": "${EXTENSION_ID}"\n}`);
-        }
-    });
+
+function resolveSettings(value: string[], workspace?: WorkspaceFolder): string[] {
+    return value.map((v) => resolveSetting(v, workspace));
 }
 
-export function logLegacySettings(): void {
-    getWorkspaceFolders().forEach((workspace) => {
-        try {
-            const legacyConfig = getConfiguration('python', workspace.uri);
-            const legacyArgs = legacyConfig.get<string[]>('formatting.blackArgs', []);
-            const legacyPath = legacyConfig.get<string>('formatting.blackPath', '');
-            if (legacyArgs.length > 0) {
-                traceWarn(`"python.formatting.blackArgs" is deprecated. Use "black-formatter.args" instead.`);
-                traceWarn(`"python.formatting.blackArgs" for workspace ${workspace.uri.fsPath}:`);
-                traceWarn(`\n${JSON.stringify(legacyArgs, null, 4)}`);
-            }
+/**
+ * Resolves and substitutes environment and workspace variables in a given string.
+ * 
+ * This is meant to give the user flexibility in how they specify
+ * configuration values for this extension in their settings.json file.
+ * 
+ * This is actually a common pattern for VS Code extensions.
+ * 
+ * The following variables are supported:
+ * 
+ * - ${userHome} - the user's home directory
+ * - ${workspaceFolder} - the current workspace folder
+ * - ${workspaceFolder:<name>} - the workspace folder with the given name
+ * - ${cwd} - the current working directory
+ * 
+ * @example
+ * ```json
+ * // raw settings.json
+ * {
+ *   "clearml-session-manager.clearmlConfigFilePath": "${userHome}/clearml.conf",
+ * }
+ * 
+ * // would be resolved to something like
+ * {
+ *   "clearml-session-manager.clearmlConfigFilePath": "/home/eric/clearml.conf",
+ * }
+ * ```
+ *
+ * @param {string} value - The string containing placeholders to be replaced.
+ * @param {WorkspaceFolder} [workspace] - The current workspace folder. If provided, it allows for the 
+ *                                        substitution of the '${workspaceFolder}' placeholder.
+ * @returns {string} - The string with placeholders substituted with actual values.
+ */
+function resolveSetting(value: string, workspace?: WorkspaceFolder): string {
+    const substitutions = new Map<string, string>();
 
-            if (legacyPath.length > 0 && legacyPath !== 'black') {
-                traceWarn(`"python.formatting.blackPath" is deprecated. Use "black-formatter.path" instead.`);
-                traceWarn(`"python.formatting.blackPath" for workspace ${workspace.uri.fsPath}:`);
-                traceWarn(`\n${JSON.stringify(legacyPath, null, 4)}`);
-            }
-        } catch (err) {
-            traceWarn(`Error while logging legacy settings: ${err}`);
-        }
+    const home = process.env.HOME || process.env.USERPROFILE;
+    if (home) {
+        substitutions.set('${userHome}', home);
+        substitutions.set('~', home);
+    }
+
+    if (workspace) {
+        substitutions.set('${workspaceFolder}', workspace.uri.fsPath);
+    }
+
+    substitutions.set('${cwd}', process.cwd());
+    getWorkspaceFolders().forEach((w: WorkspaceFolder) => {
+        substitutions.set('${workspaceFolder:' + w.name + '}', w.uri.fsPath);
     });
+
+    for (const [key, val] of substitutions) {
+        value = value.replace(key, val);
+    }
+
+    return value;
 }
+
+
+
+const getDefaultClearmlConfigFilePath = (): string => {
+    const userHome = process.env.HOME || process.env.USERPROFILE;
+    const defaultClearmlConfigFilePath = `${userHome}/clearml.conf`;
+    return defaultClearmlConfigFilePath;
+}
+
+/**
+ * Deeply merges two settings objects, with the second object taking precedence over the first.
+ * 
+ * @param {any} target - The target object to be merged into.
+ * @param {any} source - The source object from which properties are merged.
+ * @returns {any} - The merged object.
+ */
+function deepMergeSettings(target: any, source: any): any {
+    if (!source) {
+        return target;
+    }
+
+    const output = { ...target };
+    if (typeof target === 'object' && typeof source === 'object') {
+        for (const key in source) {
+            if (source[key] instanceof Object && key in target) {
+                output[key] = deepMergeSettings(target[key], source[key]);
+            } else {
+                output[key] = source[key];
+            }
+        }
+    }
+    return output;
+}
+

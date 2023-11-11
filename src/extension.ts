@@ -2,7 +2,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { ISettings, getExtensionSettings, getInterpreterFromSetting, getWorkspaceSettings } from './common/settings';
+import { ClearmlExtensionSettings, getExtensionSettings, getInterpreterFromSetting } from './common/settings';
 import { registerLogger, traceLog } from './common/logging';
 import { createOutputChannel } from './common/vscodeapi';
 import * as consts from "./common/constants";
@@ -19,14 +19,55 @@ import { getPathToClearmlConfigFile } from './common/clearml/fetch-interactive-s
 
 export async function activate(context: vscode.ExtensionContext) {
 
-	// Setup logging
+	/**
+	 * Set up the logger.
+	 * 
+	 * traceInfo(), traceError(), traceWarn(), and traceDebug() will
+	 * show up in a special "output channel" in the VS Code "Panel".
+	 * 
+	 * To view these logs in a VS Code window where this extension is activated,
+	 * 
+	 * 1. Open the panel with `Ctrl + ~`
+	 * 2. Click on the "Output" tab
+	 * 3. Select "ClearML Session Manager" output channel from the dropdown
+	 */
 	const outputChannel = createOutputChannel(consts.EXTENSION_NAME);
 	context.subscriptions.push(outputChannel, registerLogger(outputChannel));
 	
-	const settings: ISettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
-			
+	/**
+	 * Read the extension settings.
+	 * 
+	 * Settings are registered in the package.json file under the `contributes.configuration` section.
+	 * 
+	 * The user of the extension can define settings in their .vscode/settings.json or global settings.
+	 */
+	await loadPythonExtension(context);
+	const clearmlExtensionSettings: ClearmlExtensionSettings[] = await getExtensionSettings(consts.SETTINGS_NAMESPACE);
+	console.log(clearmlExtensionSettings)
+	
+	/**
+	 * Register the ClearML Session tree view.
+	 * 
+	 * VS Code Terminology:
+	 * - a "View Container" is a sidebar item in VS Code, e.g. "Explorer", "Search", "Source Control", etc.
+	 *   This extension contributes a View Container with the ClearML logo.
+	 * - a "View" is a collapsible dropdown menu within a View Container. For the file explorer view, these
+	 *   would be "Open Editors", "Outline", etc. This extension contributes a "Tree View" to the ClearML View Container.
+	 * 
+	 * This tree view allows the user to browse ClearML Sessions. The UI elements, e.g. the icons are
+	 * defined in the package.json file.
+	 */
 	const clearmlSessionsTreeProvider = new ClearMlSessionsTreeDataProvider();
 	vscode.window.registerTreeDataProvider('clearmlSessions', clearmlSessionsTreeProvider);
+
+	/**
+	 * Register the commands that are used by this extension.
+	 * 
+	 * Any of the buttons that you see in the tree view, trigger commands.
+	 * Other commands can be invoked via the command palette, e.g. `Ctrl + Shift + P`.
+	 * 
+	 * These commands are defined in the package.json file.
+	 */
 	vscode.commands.registerCommand('clearmlSessions.refreshEntry', async () => {
 		await loadPythonExtension(context);
 		clearmlSessionsTreeProvider.refresh()
@@ -54,9 +95,6 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('clearml-session-manager.installPythonDependencies', async () => {
 		// The code you place here will be executed every time your command is executed
 		await ensureClearMlSessionCliIsAvailable();
@@ -64,11 +102,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable);
-	
-	await loadPythonExtension(context);
-	await clearmlSessionsTreeProvider.refresh()
-	vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] extension loaded!`);
 
+	// Perform initial load of clearml sessions to display in the sidebar
+	await clearmlSessionsTreeProvider.refresh()
+
+	// notify the user that the extension activated successfully
+	vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] extension loaded!`);
 	console.log('Congratulations, your extension "clearml-session-manager" is now active!');
 }
 

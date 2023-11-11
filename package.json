@@ -12,6 +12,16 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Your Extension Configuration",
+      "properties": {
+        "clearml-session-manager.clearmlConfigFilePath": {
+          "type": "string",
+          "description": "Path to clearml.conf file. If unset, defaults to ~/clearml.conf",
+          "default": "~/clearml.conf"
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
