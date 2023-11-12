@@ -18,8 +18,6 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
   }
 
   getChildren(element?: ClearmlSession): Thenable<ClearmlSession[] | vscode.TreeItem[]> {
-    console.log('getChildren, element: ', element);
-
     // when the tree view is first opened, element is undefined. This means
     // this function needs to return the top-level items.
     if (!element) {

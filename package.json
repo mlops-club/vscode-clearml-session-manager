@@ -68,7 +68,7 @@
       "view/title": [
         {
           "command": "clearml-session-manager.refreshEntry",
-          "when": "view == clearml-session-tree-provider",
+          "when": "view == clearml-session-tree-view",
           "group": "navigation"
         }
       ],

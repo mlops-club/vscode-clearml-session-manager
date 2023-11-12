@@ -49,7 +49,6 @@ export async function runShellCommand(
 
 const defaultOnNonZeroExit = (exitCode: number, subprocess: ChildProcess) => {
     traceError(`Subprocess exited with non-zero status: ${exitCode}`);
-    console.log(`Subprocess exited with non-zero status: ${exitCode}`);
     subprocess.kill();
     throw new Error(`Subprocess exited with non-zero status: ${exitCode}`);
 }

@@ -67,7 +67,6 @@ export class ClearMLApiClient {
             body: JSON.stringify({ name })
         })
         const projects: Project[] = (await response.json()).data.projects as Project[];
-        console.log(projects)
 
         return projects[0].id;
     }

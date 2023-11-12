@@ -1,10 +1,11 @@
 import { checkAndPromptToInstallPythonPackages } from "../ui/install-python-libs-modal";
 import { getPathToActivePythonInterpreter, promptIfPythonInterpreterIsNotConfigured } from "../python";
-
+import * as vscode from "vscode";
 
 export const ensureClearMlSessionCliIsAvailable = async () => {
     const pythonInterpreterIsConfigured: boolean = await promptIfPythonInterpreterIsNotConfigured();
     if (!pythonInterpreterIsConfigured) {
+        vscode.window.showErrorMessage("Python interpreter is not configured");
         return;
     }
 

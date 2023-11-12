@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ClearmlExtensionSettings, getExtensionSettings, getInterpreterFromSetting } from './common/settings';
-import { registerLogger, traceLog } from './common/logging';
+import { registerLogger, traceInfo, traceLog } from './common/logging';
 import { createOutputChannel } from './common/vscodeapi';
 import * as consts from "./common/constants";
 import { initializePython } from './common/python';
@@ -10,7 +10,7 @@ import { connectToRemoteSSH } from './common/remote-ssh-connect';
 import { functionReadClearmlConfigFile } from './common/clearml/clearml-conf';
 import { getPathToClearmlConfigFile } from './common/clearml/fetch-interactive-sessions';
 import { startDetachedSubprocess } from './common/shell';
-
+import { startClearmlSessionSubprocess } from './common/clearml/attach-to-session';
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -38,11 +38,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	 */
 	await loadPythonExtension(context);
 	const clearmlExtensionSettings: ClearmlExtensionSettings = await getExtensionSettings();
-	console.log(clearmlExtensionSettings)
-
 	// print settings whenever they change
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
-        console.log("New Settings:", await getExtensionSettings())
+        traceInfo("Extension settings changed. New settings:", getExtensionSettings())
     }));
 	
 	/**
@@ -82,10 +80,23 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	vscode.commands.registerCommand(`${consts.EXTENSION_ID}.attachToSession`, async (session: ClearmlSession) => {
 		await initializePython(context.subscriptions);
-		const interpreterFpath = (getInterpreterFromSetting(consts.SETTINGS_NAMESPACE) as string[])[0];
-		startDetachedSubprocess(
-			interpreterFpath, ["-m", "clearml_session", "--attach", session.sessionTask.id], 
-		)
+
+		const extensionSettings: ClearmlExtensionSettings = await getExtensionSettings()
+		const interpreterFpath: string[] | undefined = extensionSettings.interpreter
+		console.log(extensionSettings)
+		// const config = vscode.workspace.getConfiguration("python.interpreter");
+		// console.log("python config", config)
+
+		// const interpreterFpath: string[] | undefined = getInterpreterFromSetting(consts.SETTINGS_NAMESPACE);
+		if (!interpreterFpath) {
+			vscode.window.showErrorMessage("Python interpreter is not configured");
+			return;
+		}
+
+		// startDetachedSubprocess(
+		// 	interpreterFpath[0], ["-m", "clearml_session", "--attach", session.sessionTask.id], 
+		// )
+		startClearmlSessionSubprocess(interpreterFpath[0], session.sessionTask.id)
 		// await connectToRemoteSSH();
 	})
 
@@ -104,12 +115,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 
-	// Perform initial load of clearml sessions to display in the sidebar
-	await clearmlSessionsTreeProvider.refresh()
-
 	// notify the user that the extension activated successfully
 	vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] extension loaded!`);
-	console.log('Congratulations, your extension "clearml-session-manager" is now active!');
+
+	// Perform initial load of clearml sessions to display in the sidebar, TODO this is hacky/brittle
+	setTimeout(async () => {
+		await clearmlSessionsTreeProvider.refresh()
+	}, 3000)
 }
 
 // This method is called when your extension is deactivated

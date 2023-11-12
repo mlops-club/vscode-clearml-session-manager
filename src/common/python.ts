@@ -343,11 +343,11 @@ export async function isPythonPackageInstalledInEnv(interpreterPath: string, pac
 export async function installPythonPackagesInEnv(
     interpreterPath: string, 
     packageNames: string[], 
-    logFn: (msg: string) => void = traceInfo, // Default to console.log
-    errorLogFn: (msg: string) => void = traceError // Default to console.error
+    logFn: (msg: string) => void = traceInfo,
+    errorLogFn: (msg: string) => void = traceError
 ): Promise<boolean> {
     const args = ['-m', 'pip', 'install', ...packageNames];
-    const result = await runShellCommand(interpreterPath, args, (msg: string) => {}, (msg: string) => {});
+    const result = await runShellCommand(interpreterPath, args, logFn, errorLogFn);
     traceInfo(`Install result: ${result.logs}`);
     return result.exitCode === 0;
 }
