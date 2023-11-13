@@ -23,6 +23,76 @@ ClearML is self-hostable *without kubernetes* and has a free SaaS-hosted plan, m
 
 ## Contributing
 
+### Roadmap
+
+> Items marked with ✨ are high-impact, and important for our first release
+
+Features:
+
+**Exploring sessions**
+
+- [ ] Query the ClearML API to display the most useful data about each session
+   - [ ] Total CPU cores
+   - [ ] Public IP address of the worker
+   - [ ] Private IP address of the worker
+   - [ ] Total RAM
+   - [ ] Queue name
+   - [ ] Username/email of creator
+   - [ ] Human-readable format of how long it's been alive, e.g. 1d 2h 5m
+ - [ ] Display a different-colored icon in the tree view, depending on whether the session is `queued`, `stopped`, `in_progress`, etc.
+ - [ ] Query the ClearML API for the the `clearml-session` args used to create the session including
+   - [ ] `--queue default`
+   - [ ] `--docker python3.9`
+   - [ ] `--init-script` (the contents)
+   - [ ] `--user`
+   - [ ] `--password` (we should think about how to treat this)
+- [ ] Create an intuitive means of displaying these ^^^
+
+**Connecting to sessions**
+
+- [x] ✨ Add support for connecting to existing ClearML Sessions
+  - [x] ✨ Provide a way to collect the connection details (host, port, username, password)
+  - [x] ✨ Provide a way to open the connection 
+- [ ] Add support for `settings.json` settings including
+   - [x] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
+      - [x] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
+   - [ ] `clearml.sessionPresets` (array of objects), lets you your favorite sets of arguments to the `clearml-session` CLI
+
+> **Low priority** it may be of interest to support connecting to sessions by starting an "interactive session" via `clearml-session --attach <task id>` which creates an SSH tunnel to localhost. This is a different way of connecting to
+> sessions, so this is redundant with the above.
+
+ - [ ] Start the `clearml-session` as a subprocess
+   - [ ] Log the exact `clearml-session` command somewhere that the user can see (useful for debugging and learning)
+   - [ ] Pop a message with a button allowing the user to follow along with the `clearml-session` logs
+   - [ ] Parse the logs of the subprocess to detect
+      - [ ] Failure: When the process is stuck in a retry loop because of SSH connectivity issues
+         - [ ] React to failure by killing the subprocess (maybe after 3 retries) and alerting the user, offering to show them the logs
+      - [ ] Success: Capture the connection host info, e.g. `ssh root@localhost -p 8022` and the password, e.g. `[password: pass]`
+      - [ ] Success: the process hangs because the SSH tunnel has been left open
+         - [ ] React to success by automatically opening a new VS Code window
+
+**Creating sessions**
+
+- [ ] Add a `+` button that allows you to create a ClearML session
+   - [ ] Implement a way for users to define and select presets for `clearml-sessions`. Ideas:
+      - [ ] Use something like `launch.json`, basically, have users define presets in a JSON file at `.vscode/clearml.json`
+      - [ ] Have a UI form to collect user input for the `clearml-session` arguments, e.g. by using a `Webview`. Do API calls to provide the user with autocompletion on anything we can, e.g. for which queues are available
+
+**DevOps**
+
+- [x] ✨ Add a `docker-compose.yaml` and instructions for hosting ClearML locally for development. Here's their [official reference compose file](https://github.com/allegroai/clearml-server/blob/master/docker/docker-compose.yml).
+- [ ] Add automated tests
+   - [ ] ✨ test API call logic by running the `docker-compose.yaml`
+   - [ ] test parsing logic of the `clearml.conf` file
+- [ ] Suggestion from ClearML: shutdown idle instances. Determine which are idle by querying for the host metrics, e.g. CPU utilization.
+- [ ] ✨ Add a CI pipeline
+   - [ ] formatting, so all contributed code is uniform
+   - [ ] linting
+   - [ ] testing
+- [ ] ✨ Add a CD pipeline
+   - [ ] learn how to publish a VS Code extension on the marketplace
+   - [ ] enable that for key maintainers to manually approve before the release goes out after each PR
+
 ### Running the extension locally
 
 VS Code makes it really easy to run extensions and try out code changes:
@@ -155,49 +225,7 @@ Follow steps 1, 2, 3, and 6 below.
    http://localhost:8080 and visit the `DevOps` folder in Clearml after logging in
    with `username: test`, `password: test`.
 
-### Roadmap
 
-> Items marked with ✨ are high-impact, and important for our first release
-
-Features:
-
-- [ ] Query the ClearML API to display the most useful data about each session
-   - [ ] Total CPU cores
-   - [ ] Public IP address of the worker
-   - [ ] Private IP address of the worker
-   - [ ] Total RAM
-   - [ ] Queue name
-   - [ ] Username/email of creator
-   - [ ] Human-readable format of how long it's been alive, e.g. 1d 2h 5m
-- [ ] Add support for `settings.json` settings including
-   - [x] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
-      - [x] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
-   - [ ] `clearml.sessionPresets` (array of objects), lets you your favorite sets of arguments to the `clearml-session` CLI
-- [ ] Add a `+` button that allows you to create a ClearML session
-   - [ ] Implement a way for users to define and select presets for `clearml-sessions`. Ideas:
-      - [ ] Use something like `launch.json`, basically, have users define presets in a JSON file at `.vscode/clearml.json`
-      - [ ] Have a UI form to collect user input for the `clearml-session` arguments, e.g. by using a `Webview`. Do API calls to provide the user with autocompletion on anything we can, e.g. for which queues are available
-   - [ ] Start the `clearml-session` as a subprocess
-   - [ ] Log the exact `clearml-session` command somewhere that the user can see (useful for debugging and learning)
-   - [ ] Pop a message with a button allowing the user to follow along with the `clearml-session` logs
-   - [ ] Parse the logs of the subprocess to detect
-      - [ ] ✨ Failure: When the process is stuck in a retry loop because of SSH connectivity issues
-         - [ ] ✨ React to failure by killing the subprocess (maybe after 3 retries) and alerting the user, offering to show them the logs
-      - [ ] ✨ Success: Capture the connection host info, e.g. `ssh root@localhost -p 8022` and the password, e.g. `[password: pass]`
-      - [ ] ✨ Success: the process hangs because the SSH tunnel has been left open
-         - [ ] React to success by automatically opening a new VS Code window
-- [ ] ✨ Add a `docker-compose.yaml` and instructions for hosting ClearML locally for development. Here's their [official reference compose file](https://github.com/allegroai/clearml-server/blob/master/docker/docker-compose.yml).
-- [ ] Add automated tests
-   - [ ] ✨ test API call logic by running the `docker-compose.yaml`
-   - [ ] test parsing logic of the `clearml.conf` file
-- [ ] Suggestion from ClearML: shutdown idle instances. Determine which are idle by querying for the host metrics, e.g. CPU utilization.
-- [ ] ✨ Add a CI pipeline
-   - [ ] formatting, so all contributed code is uniform
-   - [ ] linting
-   - [ ] testing
-- [ ] ✨ Add a CD pipeline
-   - [ ] learn how to publish a VS Code extension on the marketplace
-   - [ ] enable that for key maintainers to manually approve before the release goes out after each PR
 
 ## Architecture of ClearML
 
