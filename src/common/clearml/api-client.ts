@@ -109,7 +109,7 @@ export class ClearMLApiClient {
 
         // write tasks to disk as a json file, use 2-space indenting
         const tasksJson = JSON.stringify(tasks, null, 2);
-        const tasksJsonFpath = "/Users/ericriddoch/repos/extra/hello-world-vscode-ext/clearml-session-manager/tasks.json";
+        // const tasksJsonFpath = "/Users/ericriddoch/repos/extra/hello-world-vscode-ext/clearml-session-manager/tasks.json";
         const fs = require('fs').promises;
         await fs.writeFile(tasksJsonFpath, tasksJson);
 
