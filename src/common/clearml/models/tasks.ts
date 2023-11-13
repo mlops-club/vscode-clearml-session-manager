@@ -10,16 +10,22 @@ export interface Project extends IDObject {}
 
 export interface Queue extends IDObject {}
 
+export interface DataViewEntry {
+    // Define the structure of entries if known
+}
+
+export interface Iteration {
+    order: string;
+    infinite: boolean;
+    mix_batch: boolean;
+    random_seed: number;
+}
+
 export interface Input {
     view: {
-        entries: any[];
+        entries: DataViewEntry[];
     };
-    iteration: {
-        order: string;
-        infinite: boolean;
-        mix_batch: boolean;
-        random_seed: number;
-    };
+    iteration: Iteration;
     dataviews: Record<string, any>;
 }
 
@@ -57,8 +63,25 @@ export interface MetricValue {
     max_value_iteration: number;
 }
 
+export interface MetricStats {
+    metric: string;
+    event_stats_by_type: Record<string, any>;
+}
+
 export interface LastMetrics {
     [key: string]: Record<string, MetricValue>;
+}
+
+export interface HyperParamValue {
+    section: string;
+    name: string;
+    value: string;
+    type: string;
+    description: string;
+}
+
+export interface HyperParams {
+    [section: string]: Record<string, HyperParamValue>;
 }
 
 export interface Task {
@@ -89,4 +112,18 @@ export interface Task {
     last_change: string;
     last_iteration: number;
     last_metrics: LastMetrics;
+    metric_stats: Record<string, MetricStats>;
+    hyperparams: HyperParams;
+    configuration: Record<string, any>;
+    runtime: Record<string, any>;
+    models: {
+        input: any[];
+        output: any[];
+    };
+    container: {
+        image: string;
+        arguments: string;
+        setup_shell_script: string;
+    };
+    last_changed_by: string;
 }

@@ -12,6 +12,7 @@ import { startClearmlSessionSubprocess } from './common/clearml/attach-to-intera
 import { ClearMLApiClient } from './common/clearml/api-client';
 import { TaskLogResponse } from './common/clearml/models/task-logs';
 import { SshDetails, querySshDetailsForSession } from './common/clearml/ssh-connect-to-session';
+import { connectToRemoteSSH, copyPasswordToClipboard } from './common/remote-ssh-connect';
 
 export async function activate(context: vscode.ExtensionContext) {
 
@@ -40,7 +41,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	await loadPythonExtension(context);
 	const clearmlExtensionSettings: ClearmlExtensionSettings = await getExtensionSettings();
 	// print settings whenever they change
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e: vscode.ConfigurationChangeEvent) => {
         traceInfo("Extension settings changed. New settings:", getExtensionSettings());
     }));
 	
@@ -88,9 +89,16 @@ export async function activate(context: vscode.ExtensionContext) {
 		const clearmlClient = await ClearMLApiClient.fromConfigFile(clearmlConfigFilePath);
 		const sessionSshDetails: SshDetails = await querySshDetailsForSession(clearmlClient, session.sessionTask.id)
 		console.log("sessionSshDetails", sessionSshDetails)
+		console.log("sessionTaskProperties", session)
 		traceInfo("sessionSshDetails", sessionSshDetails)
 		vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] ${sessionSshDetails}`);
-
+		
+		copyPasswordToClipboard(sessionSshDetails.password)
+		connectToRemoteSSH(
+			sessionSshDetails.username,
+			session.sessionTask.hyperparams.properties.external_address.value,
+			parseInt(sessionSshDetails.port),
+		)
 
 		// const interpreterFpath: string[] | undefined = extensionSettings.interpreter;
 		// console.log(extensionSettings);

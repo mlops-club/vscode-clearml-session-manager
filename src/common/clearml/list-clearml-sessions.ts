@@ -3,7 +3,6 @@ import { Task } from "./models/tasks";
 import { ClearmlExtensionSettings, getExtensionSettings } from "../settings";
 
 
-
 export const getPathToClearmlConfigFile = async (): Promise<string> => {
     const settings: ClearmlExtensionSettings = await getExtensionSettings();
     return settings.clearmlConfigFilePath;
@@ -19,6 +18,10 @@ export const fetchClearmlSessions = async (): Promise<Task[]> => {
 
 const listClearmlSessions = async (clearmlClient: ClearMLApiClient): Promise<Task[]> => {
     const devopsProjectId = await clearmlClient.getProjectIdByName("DevOps");
-    const interactiveSessions = await clearmlClient.getTasks({projectIds: [devopsProjectId], name: "Interactive Session"});
+    const interactiveSessions = await clearmlClient.getTasks({ 
+        projectIds: [devopsProjectId], 
+        name: "Interactive Session", 
+        statuses: ["in_progress", "queued"] 
+    });
     return interactiveSessions;
 };
