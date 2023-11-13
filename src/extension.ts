@@ -85,37 +85,16 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		const extensionSettings: ClearmlExtensionSettings = await getExtensionSettings();
 
-		const clearmlConfigFilePath = extensionSettings.clearmlConfigFilePath
+		const clearmlConfigFilePath = extensionSettings.clearmlConfigFilePath;
 		const clearmlClient = await ClearMLApiClient.fromConfigFile(clearmlConfigFilePath);
-		const sessionSshDetails: SshDetails = await querySshDetailsForSession(clearmlClient, session.sessionTask.id)
-		console.log("sessionSshDetails", sessionSshDetails)
-		console.log("sessionTaskProperties", session)
-		traceInfo("sessionSshDetails", sessionSshDetails)
-		vscode.window.showInformationMessage(`[${consts.EXTENSION_NAME}] ${sessionSshDetails}`);
+		const sessionSshDetails = await querySshDetailsForSession(clearmlClient, session.sessionTask.id) as SshDetails;
 		
-		copyPasswordToClipboard(sessionSshDetails.password)
+		copyPasswordToClipboard(sessionSshDetails.password);
 		connectToRemoteSSH(
 			sessionSshDetails.username,
 			session.sessionTask.hyperparams.properties.external_address.value,
 			parseInt(sessionSshDetails.port),
-		)
-
-		// const interpreterFpath: string[] | undefined = extensionSettings.interpreter;
-		// console.log(extensionSettings);
-		// const config = vscode.workspace.getConfiguration("python.interpreter");
-		// console.log("python config", config)
-
-		// const interpreterFpath: string[] | undefined = getInterpreterFromSetting(consts.SETTINGS_NAMESPACE);
-		// if (!interpreterFpath) {
-		// 	vscode.window.showErrorMessage("Python interpreter is not configured");
-		// 	return;
-		// }
-
-		// startDetachedSubprocess(
-		// 	interpreterFpath[0], ["-m", "clearml_session", "--attach", session.sessionTask.id], 
-		// )
-		// startClearmlSessionSubprocess(interpreterFpath[0], session.sessionTask.id);
-		// await connectToRemoteSSH();
+		);
 	});
 
 	vscode.commands.registerCommand(`${consts.EXTENSION_ID}.copyValueToClipboard`, async (treeItem: vscode.TreeItem) => {

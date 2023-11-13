@@ -14,12 +14,25 @@ import * as vscode from 'vscode';
 // }
 
 export async function connectToRemoteSSH(username: string, host: string, port: number) {
-    const sshName = `${username}@${host}:${port}/root/`;
+    const sshName = `${username}@${host}:${port}`;
     try {
-        await vscode.commands.executeCommand("vscode.newWindow", {
-            remoteAuthority: `ssh-remote+${sshName}`,
+        // show progress saying "Connecting to <sshName>..."
+        let prog = vscode.window.withProgress({
+            location: vscode.ProgressLocation.Notification,
+            title: `Connecting to ${sshName}...`,
+            cancellable: false
+        }, async () => {
+            await vscode.commands.executeCommand("vscode.newWindow", {
+                remoteAuthority: `ssh-remote+${sshName}`,
+            });
+            vscode.window.showInformationMessage(`Successfully connected to ${sshName}`);
+            
+            // sleep for 3 seconds, for effect
+            await new Promise(resolve => setTimeout(resolve, 3000));
         });
-        vscode.window.showInformationMessage(`Successfully connected to ${sshName}`);
+
+
+        
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to connect to ${sshName}: ${error}`);
     }
