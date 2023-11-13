@@ -13,22 +13,19 @@ import * as vscode from 'vscode';
 //     }
 // }
 
-export async function connectToRemoteSSH() {
-    const sshName = "root@localhost:8022";
+export async function connectToRemoteSSH(username: string, host: string, port: number) {
+    const sshName = `${username}@${host}:${port}/root/`;
     try {
         await vscode.commands.executeCommand("vscode.newWindow", {
-            remoteAuthority: `ssh-remote+${sshName}`
+            remoteAuthority: `ssh-remote+${sshName}`,
         });
-        copyPasswordToClipboard();
         vscode.window.showInformationMessage(`Successfully connected to ${sshName}`);
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to connect to ${sshName}: ${error.message}`);
+        vscode.window.showErrorMessage(`Failed to connect to ${sshName}: ${error}`);
     }
 }
 
-async function copyPasswordToClipboard() {
-    const password = "pass";
-
+export async function copyPasswordToClipboard(password: string) {
     try {
         await vscode.env.clipboard.writeText(password);
         vscode.window.showInformationMessage('Password has been copied to the clipboard!');

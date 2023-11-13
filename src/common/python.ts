@@ -9,7 +9,7 @@ import { getProjectRoot } from './utilities';
 import { getWorkspaceSettings } from './settings';
 import { SETTINGS_NAMESPACE } from './constants';
 import { updateStatus } from './status';
-import * as consts from "./constants"
+import * as consts from "./constants";
 
 const exec = promisify(execCb);
 
@@ -343,11 +343,11 @@ export async function isPythonPackageInstalledInEnv(interpreterPath: string, pac
 export async function installPythonPackagesInEnv(
     interpreterPath: string, 
     packageNames: string[], 
-    logFn: (msg: string) => void = traceInfo, // Default to console.log
-    errorLogFn: (msg: string) => void = traceError // Default to console.error
+    logFn: (msg: string) => void = traceInfo,
+    errorLogFn: (msg: string) => void = traceError
 ): Promise<boolean> {
     const args = ['-m', 'pip', 'install', ...packageNames];
-    const result = await runShellCommand(interpreterPath, args, (msg: string) => {}, (msg: string) => {});
+    const result = await runShellCommand(interpreterPath, args, logFn, errorLogFn);
     traceInfo(`Install result: ${result.logs}`);
     return result.exitCode === 0;
 }
@@ -356,7 +356,7 @@ export const getPathToActivePythonInterpreter = async (): Promise<string | undef
     const projectRoot = await getProjectRoot();
     const workspaceSettings = await getWorkspaceSettings(SETTINGS_NAMESPACE, projectRoot, true);
     return workspaceSettings.interpreter[0];
-}
+};
 
 export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolean> => {
     const pathToActivePythonInterpreter: string | undefined = await getPathToActivePythonInterpreter();
@@ -375,4 +375,4 @@ export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolea
         return false;
     } 
     return true;
-}
+};

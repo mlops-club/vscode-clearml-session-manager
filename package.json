@@ -34,58 +34,58 @@
     "views": {
       "clearml-explorer-view-container": [
         {
-          "id": "clearmlSessions",
+          "id": "clearml-session-tree-view",
           "name": "ClearML Sessions"
         }
       ]
     },
     "commands": [
       {
-        "command": "clearmlSessions.installPythonDependencies",
+        "command": "clearml-session-manager.installPythonDependencies",
         "title": "ClearML: Install Python Dependencies"
       },
       {
-        "command": "clearmlSessions.refreshEntry",
+        "command": "clearml-session-manager.refreshEntry",
         "title": "ClearML: Refresh sessions",
         "icon": "$(refresh)"
       },
       {
-        "command": "clearmlSessions.openInBrowser",
+        "command": "clearml-session-manager.openInBrowser",
         "title": "View in browser",
         "icon": "$(link-external)"
       },
       {
-        "command": "clearmlSessions.attachToSession",
+        "command": "clearml-session-manager.attachToSession",
         "title": "Attach to session",
         "icon": "$(debug-start)"
       },
       {
-        "command": "clearmlSessions.copyValueToClipboard",
+        "command": "clearml-session-manager.copyValueToClipboard",
         "title": "Copy to clipboard"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "clearmlSessions.refreshEntry",
-          "when": "view == clearmlSessions",
+          "command": "clearml-session-manager.refreshEntry",
+          "when": "view == clearml-session-tree-view",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "clearmlSessions.openInBrowser",
-          "when": "view == clearmlSessions && viewItem == top-level-clearml-session-tree-item",
+          "command": "clearml-session-manager.openInBrowser",
+          "when": "view == clearml-session-tree-view && viewItem == top-level-clearml-session-tree-item",
           "group": "inline"
         },
         {
-          "command": "clearmlSessions.attachToSession",
-          "when": "view == clearmlSessions && viewItem == top-level-clearml-session-tree-item",
+          "command": "clearml-session-manager.attachToSession",
+          "when": "view == clearml-session-tree-view && viewItem == top-level-clearml-session-tree-item",
           "group": "inline"
         },
         {
-          "command": "clearmlSessions.copyValueToClipboard",
-          "when": "view == clearmlSessions && viewItem == clearml-session-detail-tree-item",
+          "command": "clearml-session-manager.copyValueToClipboard",
+          "when": "view == clearml-session-tree-view && viewItem == clearml-session-detail-tree-item",
           "group": "inline"
         }
       ]
@@ -99,8 +99,8 @@
     "compile-tests": "tsc -p . --outDir out",
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js",
+    "lint": "eslint src --ext ts --fix",
+    "test": "mv .vscode-test/user-data/1. .vscode-test/user-data/1.84-main.sock; node ./out/test/runTest.js",
     "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose",
     "clean": "bash run.sh clean",
     "start-clearml-server": "bash run.sh start-clearml-server",

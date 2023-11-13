@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
-import { ClearMLConfig, readClearMLAuthSettingsFromConfigFile } from './clearml-conf';
+import { ClearMLAuthConfig, readClearMLAuthSettingsFromConfigFile } from './clearml-conf';
 import { Task, Project } from './models/tasks';
+import { TaskLogRequestParams, TaskLogResponse } from './models/task-logs';
+import { ClearMLConfig } from './models/clearml-config';
 
 // Interface for the response structure from the authentication endpoint.
 interface AuthResponse {
@@ -10,14 +12,14 @@ interface AuthResponse {
 }
 
 export class ClearMLApiClient {
-    private config: ClearMLConfig;
+    private config: ClearMLAuthConfig;
     private token: string | null = null;
 
     /**
      * Class constructor that initializes with a configuration.
      * @param config - ClearML configuration details.
      */
-    constructor(config: ClearMLConfig) {
+    constructor(config: ClearMLAuthConfig) {
         this.config = config;
     }
 
@@ -31,10 +33,14 @@ export class ClearMLApiClient {
         return new ClearMLApiClient(config);
     }
 
+    public isAuthed(): boolean {
+        return this.token !== null;
+    }
+
     private getHeaders(): any {
         return {
             "Authorization": `Bearer ${this.token}`
-        }
+        };
     }
 
     /**
@@ -65,9 +71,14 @@ export class ClearMLApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify({ name })
-        })
-        const projects: Project[] = (await response.json()).data.projects as Project[];
-        console.log(projects)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve project ID for project name: ${name}. Response: ${await response.json()}`);
+        }
+
+        const responseJson = await response.json() as any;
+        const projects: Project[] = responseJson.data.projects as Project[];
 
         return projects[0].id;
     }
@@ -77,19 +88,50 @@ export class ClearMLApiClient {
             throw new Error("Token is not set. Call the auth() method first.");
         }
 
-        const payload: any = {}
-        if (projectIds) { payload["project"] = projectIds }
-        if (name) { payload["name"] = name }
-        if (statuses) { payload["status"] = statuses }
+        const payload: any = {};
+        if (projectIds) { payload["project"] = projectIds; }
+        if (name) { payload["name"] = name; }
+        if (statuses) { payload["status"] = statuses; }
 
         // with fetch
         const response = await fetch(this.config.api_server + "/tasks.get_all_ex", {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify({ ...payload })
-        })
-        const tasks: Task[] = (await response.json()).data.tasks as Task[];
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to retrieve tasks. Response: ${await response.json()}`);
+        }
+
+        const responseJson: any = await response.json();
+        const tasks: Task[] = responseJson.data.tasks as Task[];
+
+        // write tasks to disk as a json file, use 2-space indenting
+        const tasksJson = JSON.stringify(tasks, null, 2);
+        // const tasksJsonFpath = "/Users/ericriddoch/repos/extra/hello-world-vscode-ext/clearml-session-manager/tasks.json";
+        const fs = require('fs').promises;
+        await fs.writeFile(tasksJsonFpath, tasksJson);
+
 
         return tasks;
+    }
+
+    async getTaskLogs(params: TaskLogRequestParams): Promise<TaskLogResponse> {
+        if (!this.token) {
+            throw new Error("Token is not set. Call the auth() method first.");
+        }
+
+        const taskLogResponse: AxiosResponse<TaskLogResponse> = await axios.post(
+            this.config.api_server + "/events.get_task_log", 
+            params,
+            {
+                headers: {
+                    "Authorization": `Bearer ${this.token}`
+                }
+            }
+        );
+
+        return taskLogResponse.data;
     }
 }

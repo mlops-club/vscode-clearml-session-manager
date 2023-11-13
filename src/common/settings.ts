@@ -14,7 +14,7 @@ import { ConfigurationChangeEvent, ConfigurationScope, WorkspaceConfiguration, W
 import { getInterpreterDetails } from './python';
 import { getConfiguration, getWorkspaceFolders } from './vscodeapi';
 import { traceLog } from './logging';
-import { SETTINGS_NAMESPACE } from './constants';
+import * as consts from "./constants";
 
 export interface ClearmlExtensionSettings {
     clearmlConfigFilePath: string;
@@ -34,7 +34,7 @@ export interface ClearmlExtensionSettings {
  * @returns {Promise<ClearmlExtensionSettings>} - A promise that resolves to the deeply merged settings object.
  */
 export async function getExtensionSettings(workspace?: WorkspaceFolder): Promise<ClearmlExtensionSettings> {
-    const globalSettings: ClearmlExtensionSettings = await getGlobalSettings(SETTINGS_NAMESPACE);
+    const globalSettings: ClearmlExtensionSettings = await getGlobalSettings(consts.SETTINGS_NAMESPACE);
     
     // Use the first available workspace if none is provided
     if (!workspace) {
@@ -43,18 +43,19 @@ export async function getExtensionSettings(workspace?: WorkspaceFolder): Promise
     }
 
     if (workspace) {
-        const workspaceSettings: ClearmlExtensionSettings = await getWorkspaceSettings(SETTINGS_NAMESPACE, workspace);
-        console.log("workspace settings", workspaceSettings)
+        const includeInterpreter = true;
+        const workspaceSettings: ClearmlExtensionSettings = await getWorkspaceSettings(consts.SETTINGS_NAMESPACE, workspace, includeInterpreter);
         return deepMergeSettings(globalSettings, workspaceSettings);
-    } else {
-        return globalSettings;
     }
+
+    return globalSettings;
 }
 
 
-export function getInterpreterFromSetting(namespace: string, scope?: ConfigurationScope) {
-    const config = getConfiguration(namespace, scope);
-    return config.get<string[]>('interpreter');
+export function getInterpreterFromSetting(namespace: string, scope?: ConfigurationScope): string[] | undefined {
+    const config: WorkspaceConfiguration = getConfiguration(namespace, scope);
+    const intepreterSetting: string[] | undefined = config.get<string[]>('interpreter');
+    return intepreterSetting;
 }
 
 /**
@@ -140,7 +141,7 @@ export async function getGlobalSettings(namespace: string): Promise<ClearmlExten
     return settings;
 }
 
-export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string = SETTINGS_NAMESPACE): boolean {
+export function checkIfConfigurationChanged(e: ConfigurationChangeEvent, namespace: string = consts.SETTINGS_NAMESPACE): boolean {
     const thisExtensionSettings = [
         `${namespace}.clearmlConfigFilePath`,
     ];
@@ -217,7 +218,7 @@ const getDefaultClearmlConfigFilePath = (): string => {
     const userHome = process.env.HOME || process.env.USERPROFILE;
     const defaultClearmlConfigFilePath = `${userHome}/clearml.conf`;
     return defaultClearmlConfigFilePath;
-}
+};
 
 /**
  * Deeply merges two settings objects, with the second object taking precedence over the first.

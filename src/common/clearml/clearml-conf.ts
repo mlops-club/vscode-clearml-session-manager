@@ -9,10 +9,10 @@ export interface ClearMLAuthConfig {
 }
 
 export const functionReadClearmlConfigFile = async (clearmlConfFpath: string): Promise<ClearMLConfig> => {
-    const pythonInterpreterFpath: string = (await getPathToActivePythonInterpreter() as string)
-    const clearmlConfig = await parseHoconFileWithPyhocon(pythonInterpreterFpath, clearmlConfFpath);
+    const pythonInterpreterFpath: string = (await getPathToActivePythonInterpreter() as string);
+    const clearmlConfig: ClearMLConfig = await parseHoconFileWithPyhocon(pythonInterpreterFpath, clearmlConfFpath);
     return clearmlConfig;
-}
+};
 
 /**
  * Read the content of a file, parse it as HOCON, and extract the specified values.
@@ -21,10 +21,10 @@ export const functionReadClearmlConfigFile = async (clearmlConfFpath: string): P
  * @returns An object containing the extracted values.
  */
 export async function readClearMLAuthSettingsFromConfigFile(clearmlConfFpath: string): Promise<ClearMLAuthConfig> {
-    const clearmlConfig: any = await functionReadClearmlConfigFile(clearmlConfFpath)
+    const clearmlConfig: any = await functionReadClearmlConfigFile(clearmlConfFpath);
     return {
         api_server: clearmlConfig.api.api_server,
         access_key: clearmlConfig.api.credentials.access_key,
         secret_key: clearmlConfig.api.credentials.secret_key
-    }
+    };
 }

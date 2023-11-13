@@ -49,10 +49,9 @@ export async function runShellCommand(
 
 const defaultOnNonZeroExit = (exitCode: number, subprocess: ChildProcess) => {
     traceError(`Subprocess exited with non-zero status: ${exitCode}`);
-    console.log(`Subprocess exited with non-zero status: ${exitCode}`);
     subprocess.kill();
     throw new Error(`Subprocess exited with non-zero status: ${exitCode}`);
-}
+};
 
 /**
  * Start a bash command as a detached subprocess, react to logs as they come in, and handle non-zero exit status.
@@ -95,5 +94,5 @@ export function startDetachedSubprocess(
     });
 
     // Return the PID of the subprocess
-    return Promise.resolve({ subprocessPid: subprocess.pid });
+    return Promise.resolve({ subprocessPid: subprocess.pid as number });
 }
