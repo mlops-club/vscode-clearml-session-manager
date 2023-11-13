@@ -11,5 +11,5 @@ export const ensureClearMlSessionCliIsAvailable = async () => {
 
     // check to see if clearml-session is installed with pip, by running pip 
     const interpreterFpath = await getPathToActivePythonInterpreter() as string;
-    await checkAndPromptToInstallPythonPackages(interpreterFpath, ["clearml", "clearml-session", "pyhocon"])
+    await checkAndPromptToInstallPythonPackages(interpreterFpath, ["clearml", "clearml-session", "pyhocon"]);
 };

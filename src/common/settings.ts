@@ -14,7 +14,7 @@ import { ConfigurationChangeEvent, ConfigurationScope, WorkspaceConfiguration, W
 import { getInterpreterDetails } from './python';
 import { getConfiguration, getWorkspaceFolders } from './vscodeapi';
 import { traceLog } from './logging';
-import * as consts from "./constants"
+import * as consts from "./constants";
 
 export interface ClearmlExtensionSettings {
     clearmlConfigFilePath: string;
@@ -55,7 +55,7 @@ export async function getExtensionSettings(workspace?: WorkspaceFolder): Promise
 export function getInterpreterFromSetting(namespace: string, scope?: ConfigurationScope): string[] | undefined {
     const config: WorkspaceConfiguration = getConfiguration(namespace, scope);
     const intepreterSetting: string[] | undefined = config.get<string[]>('interpreter');
-    return intepreterSetting
+    return intepreterSetting;
 }
 
 /**
@@ -218,7 +218,7 @@ const getDefaultClearmlConfigFilePath = (): string => {
     const userHome = process.env.HOME || process.env.USERPROFILE;
     const defaultClearmlConfigFilePath = `${userHome}/clearml.conf`;
     return defaultClearmlConfigFilePath;
-}
+};
 
 /**
  * Deeply merges two settings objects, with the second object taking precedence over the first.

@@ -33,7 +33,7 @@ import { runShellCommand } from '../shell';
 export async function parseHoconFileWithPyhocon(pythonInterpreterFpath: string, hoconFilePath: string): Promise<any> {
     const args = ['-m', 'pyhocon.tool', '--compact', '--format', 'json', '--input', hoconFilePath];
 
-    traceInfo(`Parsing clearml.conf using command: ${pythonInterpreterFpath} ${args.join(' ')}`)
+    traceInfo(`Parsing clearml.conf using command: ${pythonInterpreterFpath} ${args.join(' ')}`);
     const { logs, exitCode } = await runShellCommand(pythonInterpreterFpath, args, (msg: string) => {}, traceError);
 
     if (exitCode !== 0) {

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Task } from '../clearml/models/tasks';
-import { fetchClearmlSessions } from '../clearml/fetch-interactive-sessions';
+import { fetchClearmlSessions } from '../clearml/list-clearml-sessions';
 
 export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<ClearmlSession | vscode.TreeItem> {
   constructor(public interactiveSessions: Task[] = []) { }
@@ -27,7 +27,7 @@ export class ClearMlSessionsTreeDataProvider implements vscode.TreeDataProvider<
           vscode.TreeItemCollapsibleState.Collapsed,
           sessionTask,
         ))
-      )
+      );
     }
 
     // otherwise, the element is a ClearmlSession, so expanding it should reveal
@@ -44,7 +44,7 @@ export class ClearmlSession extends vscode.TreeItem {
   // setting this value allows us to condition the context menu on the type of tree item like so:
   // "when": "viewItem == top-level-clearml-session-tree-item"; this allows us, in the package.json,
   // to distinguish between the top-level tree item and the details tree items (children of the top-level items)
-  contextValue = "top-level-clearml-session-tree-item"
+  contextValue = "top-level-clearml-session-tree-item";
 
   constructor(
     public readonly label: string,
@@ -54,13 +54,13 @@ export class ClearmlSession extends vscode.TreeItem {
   ) {
     super(label, collapsibleState);
 
-    this.description = sessionTask.id
+    this.description = sessionTask.id;
 
     this.tooltip = `
     Comment: ${sessionTask.comment}
     Project ID: ${sessionTask.project.id}
     Task ID: ${sessionTask.id}
-    `
+    `;
   }
 
   getClearmlSessionDetailsAsTreeItems = (): vscode.TreeItem[] => {
@@ -69,7 +69,7 @@ export class ClearmlSession extends vscode.TreeItem {
       treeItem.description = description;
       treeItem.contextValue = "clearml-session-detail-tree-item";
       return treeItem;
-    }
+    };
 
     return [
       makeTreeItem(`Project ID`, this.sessionTask.project.id),
@@ -83,6 +83,6 @@ export class ClearmlSession extends vscode.TreeItem {
       makeTreeItem(`Last iteration`, String(this.sessionTask.last_iteration)),
       makeTreeItem(`Last worker`, this.sessionTask.last_worker),
       makeTreeItem(`Queue `, this.sessionTask.execution.queue.id)
-    ]
-  }
+    ];
+  };
 }

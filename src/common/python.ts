@@ -9,7 +9,7 @@ import { getProjectRoot } from './utilities';
 import { getWorkspaceSettings } from './settings';
 import { SETTINGS_NAMESPACE } from './constants';
 import { updateStatus } from './status';
-import * as consts from "./constants"
+import * as consts from "./constants";
 
 const exec = promisify(execCb);
 
@@ -356,7 +356,7 @@ export const getPathToActivePythonInterpreter = async (): Promise<string | undef
     const projectRoot = await getProjectRoot();
     const workspaceSettings = await getWorkspaceSettings(SETTINGS_NAMESPACE, projectRoot, true);
     return workspaceSettings.interpreter[0];
-}
+};
 
 export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolean> => {
     const pathToActivePythonInterpreter: string | undefined = await getPathToActivePythonInterpreter();
@@ -375,4 +375,4 @@ export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolea
         return false;
     } 
     return true;
-}
+};

@@ -22,7 +22,7 @@ export async function connectToRemoteSSH() {
         copyPasswordToClipboard();
         vscode.window.showInformationMessage(`Successfully connected to ${sshName}`);
     } catch (error) {
-        vscode.window.showErrorMessage(`Failed to connect to ${sshName}: ${error.message}`);
+        vscode.window.showErrorMessage(`Failed to connect to ${sshName}: ${error}`);
     }
 }
 
