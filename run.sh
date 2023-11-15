@@ -79,6 +79,7 @@ function test {
 function clean {
     rm -rf \
       dist \
+      out \
       build \
       coverage.xml \
       test-reports \

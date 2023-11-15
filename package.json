@@ -124,6 +124,7 @@
     }
   },
   "scripts": {
+    "build": "vsce package",
     "vscode:prepublish": "npm run package",
     "compile": "webpack",
     "watch": "webpack --watch",
@@ -152,6 +153,7 @@
     "mocha": "^10.2.0",
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
+    "vsce": "^2.15.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
