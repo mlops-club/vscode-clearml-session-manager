@@ -86,17 +86,21 @@ Features:
 
 - [x] ✨ Add a `docker-compose.yaml` and instructions for hosting ClearML locally for development. Here's their [official reference compose file](https://github.com/allegroai/clearml-server/blob/master/docker/docker-compose.yml).
 - [ ] Add automated tests
-   - [ ] ✨ test API call logic by running the `docker-compose.yaml`
-   - [ ] test parsing logic of the `clearml.conf` file
+   - [x] ✨ unit tests: establish pattern of unit tests, e.g. folder structure and example test
+   - [ ] ✨ integration tests: establish pattern, e.g. run ClearML in CI via `docker-compose.yaml` and make API calls to it
 - [ ] Suggestion from ClearML: shutdown idle instances. Determine which are idle by querying for the host metrics, e.g. CPU utilization.
 - [ ] ✨ Add a CI pipeline
    - [ ] formatting, so all contributed code is uniform
    - [x] linting
    - [x] testing
    - [ ] tagging with the semantic version in `package.json`, pushing tags on merge
+   - [ ] repo shields / badges
+      - [ ] measure test code coverage and display as badge on repo
+      - [ ] show build status, e.g. "failing"
+      - [ ] change license to Apache 2.0, display as badge
 - [ ] ✨ Add a CD pipeline
-   - [ ] learn how to publish a VS Code extension on the marketplace
-   - [ ] enable that for key maintainers to manually approve before the release goes out after each PR
+   - [x] learn how to publish a VS Code extension on the marketplace
+   - [ ] [in progress] enable that for key maintainers to manually approve before the release goes out after each PR
 
 ### Running the extension locally
 
