@@ -77,18 +77,21 @@ function test {
 }
 
 function clean {
-    rm -rf dist \
-        build \
-        coverage.xml \
-        test-reports \
-        tests/artifacts \
-        dev-utils/volumes/opt/clearml/agent \
-        dev-utils/volumes/opt/clearml/config/generated_credentials.env \
-        dev-utils/volumes/opt/clearml/config/clearml.conf \
-        dev-utils/volumes/opt/clearml/data \
-        dev-utils/volumes/opt/clearml/logs \
-        dev-utils/volumes/usr/ \
-        .coverage
+    rm -rf \
+      dist \
+      build \
+      coverage.xml \
+      test-reports \
+      tests/artifacts \
+      dev-utils/volumes/opt/clearml/agent \
+      dev-utils/volumes/opt/clearml/config/generated_credentials.env \
+      dev-utils/volumes/opt/clearml/config/clearml.conf \
+      dev-utils/volumes/opt/clearml/data \
+      dev-utils/volumes/opt/clearml/logs \
+      dev-utils/volumes/usr/ \
+      .vscode-test \
+      .coverage
+      
     find . \
       -type d \
       \( \
@@ -103,6 +106,7 @@ function clean {
     find . \
       -type f \
       -name "*.pyc" \
+      -o -name "*.vsix" \
       -not -path "*env/*" \
       -exec rm {} +
 }
