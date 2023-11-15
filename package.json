@@ -1,6 +1,7 @@
 {
   "name": "clearml-session-manager",
   "displayName": "ClearML Session Manager (Unofficial)",
+  "icon": "src/resources/clearml-logo.png",
   "author": {
     "email": "eric.russia97+mlops-club@gmail.com",
     "name": "MLOps Club"

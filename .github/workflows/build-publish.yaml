@@ -1,4 +1,4 @@
-name: Publish VS Code Extension
+name: Publish to VS Code Marketplace
 
 on:
   workflow_dispatch:

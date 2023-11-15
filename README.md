@@ -91,8 +91,9 @@ Features:
 - [ ] Suggestion from ClearML: shutdown idle instances. Determine which are idle by querying for the host metrics, e.g. CPU utilization.
 - [ ] ✨ Add a CI pipeline
    - [ ] formatting, so all contributed code is uniform
-   - [ ] linting
-   - [ ] testing
+   - [x] linting
+   - [x] testing
+   - [ ] tagging with the semantic version in `package.json`, pushing tags on merge
 - [ ] ✨ Add a CD pipeline
    - [ ] learn how to publish a VS Code extension on the marketplace
    - [ ] enable that for key maintainers to manually approve before the release goes out after each PR
