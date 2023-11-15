@@ -1,8 +1,40 @@
 {
   "name": "clearml-session-manager",
-  "displayName": "ClearML Session Manager",
+  "displayName": "ClearML Session Manager (Unofficial)",
+  "author": {
+    "email": "eric.russia97+mlops-club@gmail.com",
+    "name": "MLOps Club"
+  },
+  "contributors": [
+    {
+      "name": "Eric Riddoch",
+      "url": "https://www.linkedin.com/in/eric-riddoch/"
+    },
+    {
+      "name": "Jordan Pierre",
+      "url": "https://www.linkedin.com/in/jordan-pierre/"
+    },
+    {
+      "name": "Jay Cui",
+      "url": "https://www.linkedin.com/in/shilongjaycui/"
+    },
+    {
+      "name": "Paul McSlarrow",
+      "url": "https://www.linkedin.com/in/paul-mcslarrow-58b8971b7/"
+    },
+    {
+      "name": "Saul Ifshin",
+      "url": "https://www.linkedin.com/in/saul-ifshin-a7187524b/"
+    }
+  ],
+  "license": "LGPL-3.0-only",
   "description": "List, start, stop, and connect to ClearML Sessions from VS Code.",
-  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mlops-club/vscode-clearml-session-manager.git"
+  },
+  "publisher": "mlops-club",
+  "version": "0.0.0",
   "engines": {
     "vscode": "^1.83.0"
   },
@@ -13,7 +45,7 @@
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Your Extension Configuration",
+      "title": "ClearML Session Manager Configuration",
       "properties": {
         "clearml-session-manager.clearmlConfigFilePath": {
           "type": "string",
@@ -124,10 +156,6 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@pushcorn/hocon-parser": "^1.2.9",
-    "axios": "^1.6.0",
-    "fs-extra": "^11.1.1",
-    "vscode-languageclient": "^9.0.1",
-    "vscode-languageserver-protocol": "^3.17.5"
+    "fs-extra": "^11.1.1"
   }
 }

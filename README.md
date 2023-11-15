@@ -1,10 +1,14 @@
 # `vscode-clearml-session-manager`
 
-A VS Code extension for listing, creating, deleting, and connecting to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme). 
+*The easiest way to connect to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme)--one of the best remote workstation offerings in the MLOps space. (comparison of ClearML vs others [here](https://www.linkedin.com/posts/eric-riddoch_mlops-concept-i-am-obsessed-with-remote-activity-7115239643876380672-iRu1?utm_source=share&utm_medium=member_desktop))*
+
+---
+
+> ⚠️ **Disclaimer:** this is an unofficial, community-maintained VS Code extension. While, we hope this extension is useful for you, you use it at your own risk--per the [open-source GPL 3.0 License](./LICENSE) used by this project. Allegro AI, the company behind ClearML, is not liable for issues if any arise from using this extension.
+
+> 💬 We're looking for contributors! See the [contributing](#contributing) section below.
 
 ClearML is self-hostable *without kubernetes* and has a free SaaS-hosted plan, meaning you can get a world-class data science development environment for _free_.
-
-> 💬 We're looking for contributors to prep for our first release! See the [contributing](#contributing) section below.
 
 ## Watch and learn
 
@@ -54,8 +58,8 @@ Features:
   - [x] ✨ Provide a way to collect the connection details (host, port, username, password)
   - [x] ✨ Provide a way to open the connection 
 - [ ] Add support for `settings.json` settings including
-   - [x] `clearml.clearmlConfigFpath` (string), defaults to `~/clearml.conf`
-      - [x] if `clearml.clearmlConfigFpath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
+   - [x] `clearml-session-manager.clearmlConfigFilePath` (string), defaults to `~/clearml.conf`
+      - [x] if `clearml-session-manager.clearmlConfigFilePath` is not set, and `~/clearml.conf` does not exist, prompt the user with instructions to start their own ClearML backend server and run `clearml-init`
    - [ ] `clearml.sessionPresets` (array of objects), lets you your favorite sets of arguments to the `clearml-session` CLI
 
 > **Low priority** it may be of interest to support connecting to sessions by starting an "interactive session" via `clearml-session --attach <task id>` which creates an SSH tunnel to localhost. This is a different way of connecting to
@@ -284,75 +288,3 @@ Ports mentioned as "N/A" are not directly exposed to the host machine but are us
 
 Remember to replace the example URL with the actual domain and port you will use in your production or development environment. The above diagram assumes that services like MongoDB, Redis, and Elasticsearch do not need to be accessed directly through a browser and therefore do not have a URL associated with them for external access.
 
-
-<!-- # clearml-session-manager README
-
-This is the README for your extension "clearml-session-manager". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/dev-utils/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!** -->

@@ -5,5 +5,4 @@ import { parseSshDetailsFromLogs, SshDetails } from '../../common/clearml/ssh-co
 
 suite('Extension Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
-
 });

@@ -8,7 +8,6 @@ import { runShellCommand } from './shell';
 import { getProjectRoot } from './utilities';
 import { getWorkspaceSettings } from './settings';
 import { SETTINGS_NAMESPACE } from './constants';
-import { updateStatus } from './status';
 import * as consts from "./constants";
 
 const exec = promisify(execCb);
@@ -363,7 +362,7 @@ export const promptIfPythonInterpreterIsNotConfigured = async (): Promise<boolea
     const interpreterNotSet = pathToActivePythonInterpreter === undefined || pathToActivePythonInterpreter.length === 0;
     
     if (interpreterNotSet) {
-        updateStatus(vscode.l10n.t('Please select a Python interpreter.'), vscode.LanguageStatusSeverity.Error);
+        // updateStatus(vscode.l10n.t('Please select a Python interpreter.'), vscode.LanguageStatusSeverity.Error);
         traceError(
             'Python interpreter missing:\r\n' +
                 '[Option 1] Select python interpreter using the ms-python.python.\r\n' +
