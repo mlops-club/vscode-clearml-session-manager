@@ -1,6 +1,9 @@
-# `vscode-clearml-session-manager`
-
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/mlops-club/vscode-clearml-session-manager)
+[![Build, Test, Lint, and Publish](https://github.com/mlops-club/vscode-clearml-session-manager/actions/workflows/build-test-lint-publish.yaml/badge.svg)](https://github.com/mlops-club/vscode-clearml-session-manager/actions/workflows/build-test-lint-publish.yaml)
+[![codecov](https://codecov.io/gh/mlops-club/vscode-clearml-session-manager/graph/badge.svg?token=TGO9LDODDW)](https://codecov.io/gh/mlops-club/vscode-clearml-session-manager)
+
+# `vscode-clearml-session-manager`
 
 _The easiest way to connect to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme)--one of the best remote workstation offerings in the MLOps space. (comparison of ClearML vs others [here](https://www.linkedin.com/posts/eric-riddoch_mlops-concept-i-am-obsessed-with-remote-activity-7115239643876380672-iRu1?utm_source=share&utm_medium=member_desktop))_
 

@@ -1,7 +1,7 @@
 {
   "name": "clearml-session-manager",
   "publisher": "mlops-club",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "displayName": "ClearML Session Manager",
   "icon": "src/resources/clearml-logo.png",
   "author": {
