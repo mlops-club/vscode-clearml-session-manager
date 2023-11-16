@@ -1,5 +1,7 @@
 {
   "name": "clearml-session-manager",
+  "publisher": "mlops-club",
+  "version": "0.0.1",
   "displayName": "ClearML Session Manager (Unofficial)",
   "icon": "src/resources/clearml-logo.png",
   "author": {
@@ -34,8 +36,6 @@
     "type": "git",
     "url": "https://github.com/mlops-club/vscode-clearml-session-manager.git"
   },
-  "publisher": "mlops-club",
-  "version": "0.0.0",
   "engines": {
     "vscode": "^1.83.0"
   },
