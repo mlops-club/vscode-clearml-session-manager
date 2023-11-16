@@ -1,0 +1,111 @@
+# find docs on CI for VS Code extensions here: https://code.visualstudio.com/api/working-with-extensions/continuous-integration
+#
+# Summary of this workflow:
+# - Build the extension, run extension tests using a headless browser, lint
+# - Parse the semantic version from package.json, and ensure that it was bumped
+# - If this is a merge to main, and the above passed:
+#    - push the tags to the repo
+#    - publish the extension to the marketplace
+name: Build, Test, Lint, and Publish
+
+on:
+  push:
+    branches:
+      - main  # or the name of your default branch
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+    - name: Install Dependencies
+      run: npm install
+    - name: Run Lint
+      run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+    - name: Install Dependencies
+      run: npm install
+    - name: Run Headless Tests
+      run: xvfb-run -a npm test
+
+  assert-version-has-been-bumped:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+    - name: Configure git CLI
+      run: |
+        git config --local user.email "support@mlops-club.org"
+        git config --local user.name "github-actions[bot]"
+    - name: Parse Semantic Version and Check Tag
+      run: |
+        VERSION=$(node -p -e "require('./package.json').version")
+        git tag "$VERSION" || \
+          (echo "Tag already exists, you must bump the semantic version in package.json" && exit 1)
+
+  build-extension:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+    - name: Install Dependencies
+      run: npm install
+    - name: Install VSCE
+      run: npm install --global vsce
+    - name: Package Extension
+      run: vsce package
+
+  publish:
+    needs: [lint, test, assert-version-has-been-bumped, build-extension]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+    - name: Install packaging CLI
+      run: npm install --global vsce
+    - name: Configure Git for Tagging
+      run: |
+        git config --local user.email "support@mlops-club.org"
+        git config --local user.name "github-actions[bot]"
+    - name: Create and Push Git Tag
+      run: |
+        VERSION=$(node -p -e "require('./package.json').version")
+        git tag "$VERSION"
+        git push --tags origin main
+    - name: Build Extension
+      run: vsce package
+    - name: Publish Extension
+      run: vsce publish --pat ${{ secrets.VSCE_TOKEN }}
