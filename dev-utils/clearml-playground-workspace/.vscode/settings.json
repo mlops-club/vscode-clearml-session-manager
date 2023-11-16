@@ -1,3 +1,3 @@
 {
-    "clearml-session-manager.clearmlConfigFilePath": "~/clearml.conf"
+  "clearml-session-manager.clearmlConfigFilePath": "~/clearml.conf"
 }

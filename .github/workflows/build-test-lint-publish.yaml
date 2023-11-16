@@ -11,7 +11,7 @@ name: Build, Test, Lint, and Publish
 on:
   push:
     branches:
-      - main  # or the name of your default branch
+      - main # or the name of your default branch
   workflow_dispatch:
 
 permissions:
@@ -21,93 +21,95 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
-    - name: Install Dependencies
-      run: npm install
-    - name: Run Lint
-      run: npm run lint
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Lint
+        run: npm run lint
+      - name: Run Lint
+        run: npx prettier --check .
 
   test:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
-    - name: Install Dependencies
-      run: npm install
-    - name: Run Headless Tests
-      run: xvfb-run -a npm test
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Run Headless Tests
+        run: xvfb-run -a npm test
 
   assert-version-has-been-bumped:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
-    - name: Configure git CLI
-      run: |
-        git config --local user.email "support@mlops-club.org"
-        git config --local user.name "github-actions[bot]"
-    - name: Parse Semantic Version and Check Tag
-      run: |
-        VERSION=$(node -p -e "require('./package.json').version")
-        git tag "$VERSION" || \
-          (echo "Tag already exists, you must bump the semantic version in package.json" && exit 1)
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Configure git CLI
+        run: |
+          git config --local user.email "support@mlops-club.org"
+          git config --local user.name "github-actions[bot]"
+      - name: Parse Semantic Version and Check Tag
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          git tag "$VERSION" || \
+            (echo "Tag already exists, you must bump the semantic version in package.json" && exit 1)
 
   build-extension:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
-    - name: Install Dependencies
-      run: npm install
-    - name: Install VSCE
-      run: npm install --global vsce
-    - name: Package Extension
-      run: vsce package
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm install
+      - name: Install VSCE
+        run: npm install --global vsce
+      - name: Package Extension
+        run: vsce package
 
   publish:
     needs: [lint, test, assert-version-has-been-bumped, build-extension]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2
-      with:
-        node-version: '20'
-    - name: Install node dependencies
-      run: npm install
-    - name: Install packaging CLI
-      run: npm install --global vsce
-    - name: Configure Git for Tagging
-      run: |
-        git config --local user.email "support@mlops-club.org"
-        git config --local user.name "github-actions[bot]"
-    - name: Create and Push Git Tag
-      run: |
-        VERSION=$(node -p -e "require('./package.json').version")
-        git tag "$VERSION"
-        git push --tags origin main
-    - name: Build Extension
-      run: vsce package
-    - name: Publish Extension
-      run: vsce publish --pat ${{ secrets.VSCE_TOKEN }}
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+      - name: Install node dependencies
+        run: npm install
+      - name: Install packaging CLI
+        run: npm install --global vsce
+      - name: Configure Git for Tagging
+        run: |
+          git config --local user.email "support@mlops-club.org"
+          git config --local user.name "github-actions[bot]"
+      - name: Create and Push Git Tag
+        run: |
+          VERSION=$(node -p -e "require('./package.json').version")
+          git tag "$VERSION"
+          git push --tags origin main
+      - name: Build Extension
+        run: vsce package
+      - name: Publish Extension
+        run: vsce publish --pat ${{ secrets.VSCE_TOKEN }}

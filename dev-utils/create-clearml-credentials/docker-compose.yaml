@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   create-clearml-credentials:
@@ -8,11 +8,11 @@ services:
       dockerfile: ./Dockerfile
       context: .
     environment:
-      DISPLAY: ":0"
+      DISPLAY: ':0'
       MOZ_HEADLESS: 1
-      BASE_URL: "http://host.docker.internal:8080"
-      CREDENTIALS_DOTENV_OUTFPATH: "/opt/clearml/config/generated_credentials.env"
-      CLEARML_CONF_FPATH_TO_UPDATE: "/opt/clearml/config/clearml.conf"
+      BASE_URL: 'http://host.docker.internal:8080'
+      CREDENTIALS_DOTENV_OUTFPATH: '/opt/clearml/config/generated_credentials.env'
+      CLEARML_CONF_FPATH_TO_UPDATE: '/opt/clearml/config/clearml.conf'
     volumes:
-      - ".:/app"
-      - "../dev-utils/volumes/opt/clearml/config/:/opt/clearml/config/"
+      - '.:/app'
+      - '../dev-utils/volumes/opt/clearml/config/:/opt/clearml/config/'

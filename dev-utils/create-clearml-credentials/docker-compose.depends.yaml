@@ -1,13 +1,13 @@
-version: "3.9"
+version: '3.9'
 
 services:
   create-clearml-credentials:
     depends_on:
       - webserver
     environment:
-      BASE_URL: "http://${LOCALHOST:-host.docker.internal}:8080"
+      BASE_URL: 'http://${LOCALHOST:-host.docker.internal}:8080'
     volumes:
-      - "./dev-utils/create-clearml-credentials/:/app"
-      - "./dev-utils/volumes/opt/clearml/config/:/opt/clearml/config/"
+      - './dev-utils/create-clearml-credentials/:/app'
+      - './dev-utils/volumes/opt/clearml/config/:/opt/clearml/config/'
     networks:
       - frontend

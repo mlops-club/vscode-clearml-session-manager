@@ -19,4 +19,3 @@ Once created in the UI, information about the credentials is stored as state
 in the ./dev-utils/volumes/opt/data folder. To avoid committing these large data files
 directly to git, we use a docker-compose file that runs an additional selenium/pylenium
 container to visit the UI and create the credentials.
-

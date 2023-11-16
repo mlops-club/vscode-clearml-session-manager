@@ -1,8 +1,7 @@
 # architecture diagram: https://github.com/allegroai/clearml-server#system-design
 
-version: "3.6"
+version: '3.6'
 services:
-
   apiserver:
     command:
       - apiserver
@@ -27,10 +26,10 @@ services:
       CLEARML_REDIS_SERVICE_HOST: redis
       CLEARML_REDIS_SERVICE_PORT: 6379
       CLEARML_SERVER_DEPLOYMENT_TYPE: ${CLEARML_SERVER_DEPLOYMENT_TYPE:-linux}
-      CLEARML__apiserver__pre_populate__enabled: "true"
-      CLEARML__apiserver__pre_populate__zip_files: "/opt/clearml/db-pre-populate"
-      CLEARML__apiserver__pre_populate__artifacts_path: "/mnt/fileserver"
-      CLEARML__services__async_urls_delete__enabled: "true"
+      CLEARML__apiserver__pre_populate__enabled: 'true'
+      CLEARML__apiserver__pre_populate__zip_files: '/opt/clearml/db-pre-populate'
+      CLEARML__apiserver__pre_populate__artifacts_path: '/mnt/fileserver'
+      CLEARML__services__async_urls_delete__enabled: 'true'
       # these values come from here: https://clear.ml/docs/latest/docs/deploying_clearml/clearml_server_security/#example-using-docker-compose
       # CLEARML__SECURE__HTTP__SESSION_SECRET__APISERVER: "NXC9QMHYXP95JPWEORC4"
       # CLEARML__SECURE__AUTH__TOKEN_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"
@@ -41,7 +40,7 @@ services:
       # CLEARML__SECURE__CREDENTIALS__TESTS__USER_KEY: "NXC9QMHYXP95JPWEORC4"
       # CLEARML__SECURE__CREDENTIALS__TESTS__USER_SECRET: "hpwa08LCTCoTcempS4I141lI4KLejXCPb9i0opbSD6xSeK2UST"
     ports:
-      - "8008:8008"
+      - '8008:8008'
     networks:
       - backend
       - frontend
@@ -53,20 +52,20 @@ services:
     environment:
       ES_JAVA_OPTS: -Xms2g -Xmx2g -Dlog4j2.formatMsgNoLookups=true
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
-      bootstrap.memory_lock: "true"
+      bootstrap.memory_lock: 'true'
       cluster.name: clearml
-      cluster.routing.allocation.node_initial_primaries_recoveries: "500"
+      cluster.routing.allocation.node_initial_primaries_recoveries: '500'
       cluster.routing.allocation.disk.watermark.low: 500mb
       cluster.routing.allocation.disk.watermark.high: 500mb
       cluster.routing.allocation.disk.watermark.flood_stage: 500mb
-      discovery.zen.minimum_master_nodes: "1"
-      discovery.type: "single-node"
-      http.compression_level: "7"
-      node.ingest: "true"
+      discovery.zen.minimum_master_nodes: '1'
+      discovery.type: 'single-node'
+      http.compression_level: '7'
+      node.ingest: 'true'
       node.name: clearml
       reindex.remote.whitelist: '*.*'
-      xpack.monitoring.enabled: "false"
-      xpack.security.enabled: "false"
+      xpack.monitoring.enabled: 'false'
+      xpack.security.enabled: 'false'
     ulimits:
       memlock:
         soft: -1
@@ -89,14 +88,14 @@ services:
     container_name: clearml-fileserver
     image: allegroai/clearml:latest
     environment:
-      CLEARML__fileserver__delete__allow_batch: "true"
+      CLEARML__fileserver__delete__allow_batch: 'true'
     restart: unless-stopped
     volumes:
       - ./dev-utils/volumes/opt/clearml/logs:/var/log/clearml
       - ./dev-utils/volumes/opt/clearml/data/fileserver:/mnt/fileserver
       - ./dev-utils/volumes/opt/clearml/config:/opt/clearml/config
     ports:
-      - "8081:8081"
+      - '8081:8081'
 
   mongo:
     networks:
@@ -129,7 +128,7 @@ services:
     depends_on:
       - apiserver
     ports:
-      - "8080:80"
+      - '8080:80'
     networks:
       - backend
       - frontend
@@ -162,7 +161,7 @@ services:
       CLEARML_REDIS_SERVICE_HOST: redis
       CLEARML_REDIS_SERVICE_PORT: 6379
       PYTHONPATH: /opt/clearml/apiserver
-      CLEARML__services__async_urls_delete__fileserver__url_prefixes: "[${CLEARML_FILES_HOST:-}]"
+      CLEARML__services__async_urls_delete__fileserver__url_prefixes: '[${CLEARML_FILES_HOST:-}]'
     entrypoint:
       - python3
       - -m
@@ -191,15 +190,15 @@ services:
       CLEARML_AGENT_GIT_USER: ${CLEARML_AGENT_GIT_USER}
       CLEARML_AGENT_GIT_PASS: ${CLEARML_AGENT_GIT_PASS}
       CLEARML_AGENT_UPDATE_VERSION: ${CLEARML_AGENT_UPDATE_VERSION:->=0.17.0}
-      CLEARML_AGENT_DEFAULT_BASE_DOCKER: "ubuntu:18.04"
+      CLEARML_AGENT_DEFAULT_BASE_DOCKER: 'ubuntu:18.04'
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-minioadmin}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-}
       AZURE_STORAGE_ACCOUNT: ${AZURE_STORAGE_ACCOUNT:-}
       AZURE_STORAGE_KEY: ${AZURE_STORAGE_KEY:-}
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-}
-      CLEARML_WORKER_ID: "clearml-services"
-      CLEARML_AGENT_DOCKER_HOST_MOUNT: "${PWD}/volumes/opt/clearml/agent:/root/.clearml"
+      CLEARML_WORKER_ID: 'clearml-services'
+      CLEARML_AGENT_DOCKER_HOST_MOUNT: '${PWD}/volumes/opt/clearml/agent:/root/.clearml'
       SHUTDOWN_IF_NO_ACCESS_KEY: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -210,12 +209,12 @@ services:
       bash -c "curl --retry 10 --retry-delay 10 --retry-connrefused 'http://apiserver:8008/debug.ping' && /usr/agent/entrypoint.sh"
 
   agent-sessions-queue:
-    <<: *agent_defaults  # This is the alias
+    <<: *agent_defaults # This is the alias
     container_name: clearml-agent-sessions
     environment:
       <<: *agent_defaults__environment
-      CLEARML_AGENT_EXTRA_ARGS: "--queue sessions --create-queue --docker"
-      CLEARML_WORKER_ID: "clearml-sessions"
+      CLEARML_AGENT_EXTRA_ARGS: '--queue sessions --create-queue --docker'
+      CLEARML_WORKER_ID: 'clearml-sessions'
     entrypoint: >
       bash -c "curl --retry 10 --retry-delay 10 --retry-connrefused 'http://apiserver:8008/debug.ping' && /usr/agent/entrypoint.sh --cpu-only"
 
@@ -225,17 +224,17 @@ services:
     volumes:
       - ./dev-utils/volumes/opt/clearml/data/minio:/data
     environment:
-      MINIO_ACCESS_KEY: "minioadmin"  # Replace with your actual access key
-      MINIO_SECRET_KEY: "minioadmin"  # Replace with your actual secret key
+      MINIO_ACCESS_KEY: 'minioadmin' # Replace with your actual access key
+      MINIO_SECRET_KEY: 'minioadmin' # Replace with your actual secret key
     command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     networks:
       - backend
       - frontend
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 30s
       timeout: 20s
       retries: 3
