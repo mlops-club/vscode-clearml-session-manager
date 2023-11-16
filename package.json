@@ -2,7 +2,7 @@
   "name": "clearml-session-manager",
   "publisher": "mlops-club",
   "version": "0.0.3",
-  "displayName": "ClearML Session Manager (Unofficial)",
+  "displayName": "ClearML Session Manager",
   "icon": "src/resources/clearml-logo.png",
   "author": {
     "email": "eric.russia97+mlops-club@gmail.com",
@@ -30,7 +30,7 @@
       "url": "https://www.linkedin.com/in/saul-ifshin-a7187524b/"
     }
   ],
-  "license": "LGPL-3.0-only",
+  "license": "Apache-2.0",
   "description": "List, start, stop, and connect to ClearML Sessions from VS Code.",
   "repository": {
     "type": "git",
@@ -135,12 +135,13 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src --ext ts --fix",
     "format": "prettier --write ./",
-    "test": "mv .vscode-test/user-data/1. .vscode-test/user-data/1.84-main.sock; node ./out/test/runTest.js",
+    "test": "mv .vscode-test/user-data/1. .vscode-test/user-data/1.84-main.sock; c8 node ./out/test/runTest.js",
     "create-clearml-credentials": "bash run.sh generate-clearml-credentials-for-compose",
     "clean": "bash run.sh clean",
     "start-clearml-server": "bash run.sh start-clearml-server",
     "start-clearml-session": "bash run.sh start-clearml-session --yes --queue sessions --docker python:3.9 --password test --username test",
-    "install-python-deps": "pip install clearml-session clearml pyhocon"
+    "install-python-deps": "pip install clearml-session clearml pyhocon",
+    "serve-coverage-report": "python -m http.server --directory coverage/lcov-report/ 80"
   },
   "extensionDependencies": [
     "ms-vscode-remote.remote-ssh",
@@ -154,13 +155,15 @@
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
     "@vscode/test-electron": "^2.3.6",
+    "c8": "^8.0.1",
     "eslint": "^8.52.0",
     "glob": "^10.3.10",
     "mocha": "^10.2.0",
     "prettier": "^3.1.0",
+    "source-map-support": "^0.5.21",
     "ts-loader": "^9.5.0",
     "typescript": "^5.2.2",
-    "vsce": "^2.15.0",
+    "vsce": "^1.97.0",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },

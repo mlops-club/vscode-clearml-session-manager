@@ -1,10 +1,8 @@
 # `vscode-clearml-session-manager`
 
+[![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](./LICENSE)
+
 _The easiest way to connect to [ClearML Sessions](https://github.com/allegroai/clearml-session#readme)--one of the best remote workstation offerings in the MLOps space. (comparison of ClearML vs others [here](https://www.linkedin.com/posts/eric-riddoch_mlops-concept-i-am-obsessed-with-remote-activity-7115239643876380672-iRu1?utm_source=share&utm_medium=member_desktop))_
-
----
-
-> ⚠️ **Disclaimer:** this is an unofficial, community-maintained VS Code extension. While, we hope this extension is useful for you, you use it at your own risk--per the [open-source GPL 3.0 License](./LICENSE) used by this project. Allegro AI, the company behind ClearML, is not liable for issues if any arise from using this extension.
 
 > 💬 We're looking for contributors! See the [contributing](#contributing) section below.
 

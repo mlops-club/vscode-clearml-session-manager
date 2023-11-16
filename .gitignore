@@ -13,3 +13,4 @@ dev-utils/volumes/opt/clearml/config/generated_credentials.env
 dev-utils/volumes/opt/clearml/config/clearml.conf
 dev-utils/volumes/usr
 *.log
+coverage

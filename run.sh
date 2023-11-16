@@ -91,6 +91,8 @@ function clean {
       dev-utils/volumes/opt/clearml/logs \
       dev-utils/volumes/usr/ \
       .vscode-test \
+      coverage \
+      .nyc_output \
       .coverage
       
     find . \
