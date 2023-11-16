@@ -29,9 +29,9 @@ jobs:
           node-version: '20'
       - name: Install Dependencies
         run: npm install
-      - name: Run Lint
+      - name: Lint
         run: npm run lint
-      - name: Run Lint
+      - name: Format
         run: npx prettier --check .
 
   test:
